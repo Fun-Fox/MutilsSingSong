@@ -11,3 +11,6 @@ dist/
 
 .venv/
 venv/
+assets/zdcf/segment_videos/*
+assets/zdcf/captured_frames/*
+
