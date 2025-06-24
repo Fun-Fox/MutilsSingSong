@@ -106,7 +106,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y):
 script.add_track(draft.Track_type.video, track_name=f'封面', relative_index=0)
 
 
-def add_end_frame_image(script,start_time,output_path_end):
+def add_end_frame_image(script,start_time,output_path_end,transform_x,transform_y):
     script.add_track(draft.Track_type.video, track_name=f'{idx}-{output_path_end}-image',
                      relative_index=idx * 2 - i + 1)
     video_material = draft.Video_material(output_path_end)
@@ -115,8 +115,8 @@ def add_end_frame_image(script,start_time,output_path_end):
                                         target_timerange=draft.Timerange(start_time, 6000000 * 3),
                                         source_timerange=draft.Timerange(0, video_material.duration),
                                         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
-                                                                    transform_x=0.5,
-                                                                    transform_y=-0.5))  # 与素材等长
+                                                                    transform_x=transform_x,
+                                                                    transform_y=transform_y))  # 与素材等长
     print(f"图片添加到视频轨道{idx}-{video_file}")
     # 添加到轨道
     script.add_segment(video_segment, f'{idx}-{output_path_end}-image', )
@@ -205,19 +205,8 @@ for idx, video_file in enumerate(video_files):
             # 第一个宫格视频添加视频轨道
             start_time, script = add_video_material(start_time, output_video_path, transform_x=-0.5, transform_y=0.5)
             # 添加静止图片
-            script.add_track(draft.Track_type.video, track_name=f'{idx}-{output_path_end}-image',
-                             relative_index=idx * 2 - i + 1)
-            video_material = draft.Video_material(output_path_end)
-            print(f"图片添加视频：{output_video_path}，\n 开始时间{start_time}，时长{video_material.duration}")
-            video_segment = draft.Video_segment(video_material,
-                                                target_timerange=draft.Timerange(start_time, 5600000 * 3),
-                                                source_timerange=draft.Timerange(0, video_material.duration),
-                                                clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
-                                                                            transform_x=-0.5,
-                                                                            transform_y=0.5))  # 与素材等长
-            print(f"图片添加到视频轨道{idx}-{video_file}")
-            # 添加到轨道
-            script.add_segment(video_segment, f'{idx}-{output_path_end}-image', )
+            # 添加静止图片
+            add_end_frame_image(script, start_time, output_path_end, transform_x=-0.5, transform_y=0.5)
 
         elif idx == 1 and i % 4 == 1:
             # 第二个宫格视频添加视频轨道
@@ -241,7 +230,7 @@ for idx, video_file in enumerate(video_files):
             start_time, script = add_video_material(start_time, output_video_path, transform_x=0.5, transform_y=0.5)
 
             # 添加静止图片
-            add_end_frame_image(script, start_time, output_path_end)
+            add_end_frame_image(script, start_time, output_path_end,transform_x=0.5,transform_y=0.5)
 
 
 
@@ -264,8 +253,7 @@ for idx, video_file in enumerate(video_files):
             start_time, script = add_video_material(start_time, output_video_path, transform_x=-0.5, transform_y=-0.5)
 
             # 添加静止图片
-            # 添加静止图片
-            add_end_frame_image(script, start_time, output_path_end)
+            add_end_frame_image(script, start_time, output_path_end, transform_x=-0.5, transform_y=-0.5)
         elif idx == 3 and i % 4 == 3:
             if i==3:
                 # 添加首帧图片
@@ -285,7 +273,7 @@ for idx, video_file in enumerate(video_files):
             start_time, script = add_video_material(start_time, output_video_path, transform_x=0.5, transform_y=-0.5)
 
             # 添加静止图片
-            add_end_frame_image(script,start_time,output_path_end)
+            add_end_frame_image(script, start_time, output_path_end, transform_x=0.5, transform_y=-0.5)
         else:
             video_material = draft.Video_material(output_video_path)
             start_time += video_material.duration
