@@ -106,12 +106,13 @@ script.add_track(draft.Track_type.video, track_name=f'封面', relative_index=0)
 
 
 def add_end_frame_image(script, start_time, output_path_end, transform_x, transform_y):
-    if start_time + 1000 < video.duration:
+    if start_time + 1000000 < (video.duration * 1000000):
         script.add_track(draft.Track_type.video, track_name=f'{idx}-{output_path_end}-image',
                          relative_index=idx * 2 - i + 1)
         video_material = draft.Video_material(output_path_end)
         print(f"图片添加视频：{output_video_path}，\n 开始时间{start_time}，时长{video_material.duration}")
         video_segment = draft.Video_segment(video_material,
+                                            # 7s= 7000000
                                             target_timerange=draft.Timerange(start_time, 7000000 * 3),
                                             source_timerange=draft.Timerange(0, video_material.duration),
                                             clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
