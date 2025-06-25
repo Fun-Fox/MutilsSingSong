@@ -1,3 +1,5 @@
+import datetime
+
 from moviepy import VideoFileClip
 import os
 import shutil
@@ -5,7 +7,7 @@ import librosa
 import tempfile
 import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
-from pyJianYingDraft.pyJianYingDraft import Clip_settings
+from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate
 
 # === 第一步：从第一个视频提取卡点时间点 ===
 root_dir = os.path.dirname(os.path.abspath(__file__))
@@ -115,9 +117,9 @@ script.add_track(draft.Track_type.video, track_name=f'封面', relative_index=0)
 
 
 def add_end_frame_image(script, start_time, output_path_end, transform_x, transform_y):
-    if start_time  < (video.duration * 1000000):
+    if start_time + 1000000 < (video.duration * 1000000):
         script.add_track(draft.Track_type.video, track_name=f'{idx}-{output_path_end}-image',
-                         relative_index=(idx+5) * 2 - i + 1)
+                         relative_index=(idx + 5) * 2 - i + 1)
         video_material = draft.Video_material(output_path_end)
         print(f"图片添加视频：{output_video_path}，\n 开始时间{start_time}，时长{video_material.duration}")
         video_segment = draft.Video_segment(video_material,
@@ -288,3 +290,26 @@ for idx, video_file in enumerate(video_files):
 script.dump(DUMP_PATH)
 
 print("\n🎉 所有视频片段及截图已成功处理！")
+
+ctrl = draft.Jianying_controller()
+OUTPUT_PATH = os.path.join(root_dir, "output")
+os.makedirs(OUTPUT_PATH, exist_ok=True)
+now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+output_path = os.path.join(OUTPUT_PATH, f"四宫格接力唱歌_{now_date}.mp4")
+ctrl.export_draft(draft_folder_name, output_path,
+                  resolution=Export_resolution.RES_1080P,
+                  framerate=Export_framerate.FR_24,
+                  )
+print(f"导出视频完成: {output_path}")
+
+# 使用视频长度裁剪视频
+output_video = VideoFileClip(output_path)
+
+# 使用原始视频的 duration 进行裁剪
+clipped_video = output_video.subclipped(0, video.duration)
+
+# 保存裁剪后的视频
+clipped_output_path = os.path.join(OUTPUT_PATH, f"四宫格接力唱歌_{now_date}_裁剪版.mp4")
+clipped_video.write_videofile(clipped_output_path, codec="libx264", audio_codec="aac")
+
+print(f"✅ 视频已裁剪并保存至: {clipped_output_path}")
