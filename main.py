@@ -8,7 +8,8 @@ import pyJianYingDraft.pyJianYingDraft as draft
 from pyJianYingDraft.pyJianYingDraft import Clip_settings
 
 # === 第一步：从第一个视频提取卡点时间点 ===
-video_folder = r"D:\Code\MutilsSingSong\assets\zdcf"  # 视频文件夹路径
+root_dir = os.path.dirname(os.path.abspath(__file__))
+video_folder = os.path.join(root_dir, "assets", "zdcf")  # 视频文件夹路径
 first_video_path = os.path.join(video_folder, "TikDownloader.io_7290511187026939154_hd.mp4")  # 第一个视频路径
 
 # 加载第一个视频
@@ -32,10 +33,18 @@ beat_times = librosa.frames_to_time(beat_frames, sr=sr)
 
 # 设置最小间隔为 5 秒，并过滤密集卡点
 MIN_INTERVAL = 5.0
+MAX_INTERVAL = 6.0
 filtered_beat_times = []
 last_time = -MIN_INTERVAL
+
 for time in sorted(beat_times):
-    if time - last_time >= MIN_INTERVAL:
+    interval = time - last_time
+    if interval >= MIN_INTERVAL:
+        # 如果间隔超过最大间隔，可以插入一个中间点
+        while interval > MAX_INTERVAL:
+            last_time += MAX_INTERVAL
+            filtered_beat_times.append(last_time)
+            interval = time - last_time
         filtered_beat_times.append(time)
         last_time = time
 
@@ -106,14 +115,14 @@ script.add_track(draft.Track_type.video, track_name=f'封面', relative_index=0)
 
 
 def add_end_frame_image(script, start_time, output_path_end, transform_x, transform_y):
-    if start_time + 1000000 < (video.duration * 1000000):
+    if start_time  < (video.duration * 1000000):
         script.add_track(draft.Track_type.video, track_name=f'{idx}-{output_path_end}-image',
-                         relative_index=idx * 2 - i + 1)
+                         relative_index=(idx+5) * 2 - i + 1)
         video_material = draft.Video_material(output_path_end)
         print(f"图片添加视频：{output_video_path}，\n 开始时间{start_time}，时长{video_material.duration}")
         video_segment = draft.Video_segment(video_material,
                                             # 7s= 7000000
-                                            target_timerange=draft.Timerange(start_time, 7000000 * 3),
+                                            target_timerange=draft.Timerange(start_time, 6000000 * 3),
                                             source_timerange=draft.Timerange(0, video_material.duration),
                                             clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
                                                                         transform_x=transform_x,
@@ -203,7 +212,6 @@ for idx, video_file in enumerate(video_files):
         if idx == 0 and i % 4 == 0:
             # 第一个宫格视频添加视频轨道
             start_time, script = add_video_material(start_time, output_video_path, transform_x=-0.5, transform_y=0.5)
-            # 添加静止图片
             # 添加静止图片
             add_end_frame_image(script, start_time, output_path_end, transform_x=-0.5, transform_y=0.5)
 
