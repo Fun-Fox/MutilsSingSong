@@ -11,8 +11,28 @@ from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Ex
 
 # === 第一步：从第一个视频提取卡点时间点 ===
 root_dir = os.path.dirname(os.path.abspath(__file__))
-video_folder = os.path.join(root_dir, "assets", "zdcf")  # 视频文件夹路径
-first_video_path = os.path.join(video_folder, "TikDownloader.io_7290511187026939154_hd.mp4")  # 第一个视频路径
+# video_folder = os.path.join(root_dir, "assets", "love the way you lie")  # 视频文件夹路径
+
+# video_folder = os.path.join(root_dir, "assets", "105-1")  # 视频文件夹路径
+
+# video_folder = os.path.join(root_dir, "assets", "105-2")  # 视频文件夹路径
+
+
+# video_folder = os.path.join(root_dir, "assets", "zdht")  # 视频文件夹路径
+
+
+video_folder = os.path.join(root_dir, "assets", "bbg")  # 视频文件夹路径
+
+# 获取 video_folder 路径下的所有 .mp4 视频文件
+video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
+
+# 检查是否存在至少一个视频文件
+if video_files:
+    # 取第一个视频文件作为 first_video_path
+    first_video_path = os.path.join(video_folder, video_files[0])
+    print(f"✅ 第一个视频路径为: {first_video_path}")
+else:
+    raise FileNotFoundError("未找到任何 .mp4 视频文件")
 
 # 加载第一个视频
 print("📘 正在加载第一个视频...")
@@ -34,8 +54,8 @@ tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
 beat_times = librosa.frames_to_time(beat_frames, sr=sr)
 
 # 设置最小间隔为 5 秒，并过滤密集卡点
-MIN_INTERVAL = 5.0
-MAX_INTERVAL = 6.0
+MIN_INTERVAL = video.duration / 4 - 2
+MAX_INTERVAL = video.duration / 4
 filtered_beat_times = []
 last_time = -MIN_INTERVAL
 
@@ -124,7 +144,7 @@ def add_end_frame_image(script, start_time, output_path_end, transform_x, transf
         print(f"图片添加视频：{output_video_path}，\n 开始时间{start_time}，时长{video_material.duration}")
         video_segment = draft.Video_segment(video_material,
                                             # 7s= 7000000
-                                            target_timerange=draft.Timerange(start_time, 6000000 * 3),
+                                            target_timerange=draft.Timerange(start_time, MAX_INTERVAL * 1000000 * 3),
                                             source_timerange=draft.Timerange(0, video_material.duration),
                                             clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
                                                                         transform_x=transform_x,
@@ -199,6 +219,9 @@ for idx, video_file in enumerate(video_files):
         os.makedirs(segment_video_folder, exist_ok=True)
 
         # 截取片段并保存
+        # 示例修复代码
+        duration = clip.duration  # 获取视频总时长
+        end = min(end, duration, video.duration)  # 自动限制 end 不超过视频长度
         sub_clip = clip.subclipped(start, end)
 
         output_video_path = os.path.join(
@@ -294,7 +317,7 @@ print("\n🎉 所有视频片段及截图已成功处理！")
 ctrl = draft.Jianying_controller()
 OUTPUT_PATH = os.path.join(root_dir, "output")
 os.makedirs(OUTPUT_PATH, exist_ok=True)
-now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 output_path = os.path.join(OUTPUT_PATH, f"四宫格接力唱歌_{now_date}.mp4")
 ctrl.export_draft(draft_folder_name, output_path,
                   resolution=Export_resolution.RES_1080P,
