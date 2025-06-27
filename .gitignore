@@ -15,3 +15,6 @@ assets/*
 /*.mp4
 /output/*
 *.mp4
+*.wav
+*.srt
+audios

@@ -2,3 +2,4 @@ moviepy>=2.2.1
 librosa>=0.11.0
 opencv-python>=4.11.0.86
 numpy>=2.2.6
+faster_whisper~=1.1.1

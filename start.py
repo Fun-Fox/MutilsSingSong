@@ -47,8 +47,8 @@ def export_video(video_folder):
 
     # 设置最小间隔为 5 秒，并过滤密集卡点
     segment_duration = 4
-    if video.duration / 4.5 > 10:
-        segment_duration = 4.5
+    # if video.duration / 4.5 > 10:
+    #     segment_duration = 4.5
         # if video.duration / 7 > 7:
         #     segment_duration = 7
 
@@ -98,8 +98,7 @@ def export_video(video_folder):
     # 保存路径
     DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
-    asset_dir = os.path.join(os.path.dirname(__file__), 'assets', 'zdcf')
-    assert os.path.exists(asset_dir), f"未找到素材文件夹{os.path.abspath(asset_dir)}"
+
 
     # 创建剪映草稿
     script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
