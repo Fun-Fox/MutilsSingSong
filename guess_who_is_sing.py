@@ -6,6 +6,7 @@ from moviepy import VideoFileClip
 from sympy import false
 
 import pyJianYingDraft.pyJianYingDraft as draft
+from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
     Export_framerate
 
@@ -27,7 +28,10 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
 
 def export_who_is_singing_video(video_folder):
     # 获取 video_folder 路径下的所有 .mp4 视频文件
-    video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
+
+    cute_video(video_folder, os.path.join(video_folder, 'trimmed'))
+
+    video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")]
 
     # 创建剪映草稿
     base_folder = os.path.join(

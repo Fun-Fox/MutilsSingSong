@@ -16,8 +16,8 @@ if __name__ == "__main__":
     # video_folder = os.path.join(root_dir, "assets", "cydd-1")  # 视频文件夹路径
     # export_video(video_folder)
     #
-    video_folder = os.path.join(root_dir, "assets", "1")  # 视频文件夹路径
-    # export_step_by_step_music_video(video_folder)
+    video_folder = os.path.join(root_dir, "assets", "2")  # 视频文件夹路径
+    export_step_by_step_music_video(video_folder)
     export_who_is_singing_video(video_folder)
 
     # video_folder = os.path.join(root_dir, "assets", "yellow")  # 视频文件夹路径

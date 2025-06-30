@@ -169,6 +169,42 @@ def export_step_by_step_music_video(video_folder):
         script.add_track(draft.Track_type.text, track_name=f'text-index-{idx}', relative_index=idx * 2 + 200)
 
         start_time = 0
+
+
+        if idx == 0:
+            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+                                     font=Font_type.新青年体,
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                     clip_settings=Clip_settings(transform_x=-0.2,
+                                                                 transform_y=0.2))
+            script.add_segment(seg, f"text-index-{idx}")
+
+        elif idx == 1:
+
+            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+                                     font=Font_type.新青年体,
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                     clip_settings=Clip_settings(transform_x=0.2, transform_y=0.2))
+            script.add_segment(seg, f"text-index-{idx}")
+
+        elif idx == 2:
+
+            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+                                     font=Font_type.新青年体,
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                     clip_settings=Clip_settings(transform_x=-0.2,
+                                                                 transform_y=-0.2))
+            script.add_segment(seg, f"text-index-{idx}")
+
+        elif idx == 3:
+
+            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+                                     font=Font_type.新青年体,
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                     clip_settings=Clip_settings(transform_x=0.2,
+                                                                 transform_y=-0.2))
+            script.add_segment(seg, f"text-index-{idx}")
+
         # 裁剪的节点片段
         for i, (start, end) in enumerate(segments):
 
@@ -241,6 +277,8 @@ def export_step_by_step_music_video(video_folder):
             # sub_clip.close()
             print(f"💾 已保存视频片段至：{output_video_path}")
 
+
+
             if idx == 0 and i % 4 == 0:
                 # 第一个宫格视频添加视频轨道
                 start_time, script = add_video_material(start_time, output_video_path, transform_x=-0.5,
@@ -248,12 +286,7 @@ def export_step_by_step_music_video(video_folder):
                 # 添加静止图片
                 add_end_frame_image(script, start_time, output_path_end, transform_x=-0.5, transform_y=0.5)
 
-                seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
-                                         font=Font_type.新青年体,
-                                         style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
-                                         clip_settings=Clip_settings(transform_x=-0.2,
-                                                                     transform_y=0.2))
-                script.add_segment(seg, f"text-index-{idx}")
+
 
             elif idx == 1 and i % 4 == 1:
                 # 第二个宫格视频添加视频轨道
@@ -279,14 +312,6 @@ def export_step_by_step_music_video(video_folder):
                 # 添加静止图片
                 add_end_frame_image(script, start_time, output_path_end, transform_x=0.5, transform_y=0.5)
 
-                seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
-                                         font=Font_type.新青年体,
-                                         style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
-                                         clip_settings=Clip_settings(transform_x=-0.2,
-                                                                     transform_y=0.2))
-                script.add_segment(seg, f"text-index-{idx}")
-
-
 
             elif idx == 2 and i % 4 == 2:
                 if i == 2:
@@ -310,12 +335,6 @@ def export_step_by_step_music_video(video_folder):
                 # 添加静止图片
                 add_end_frame_image(script, start_time, output_path_end, transform_x=-0.5, transform_y=-0.5)
 
-                seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
-                                         font=Font_type.新青年体,
-                                         style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
-                                         clip_settings=Clip_settings(transform_x=-0.2,
-                                                                     transform_y=0.2))
-                script.add_segment(seg, f"text-index-{idx}")
             elif idx == 3 and i % 4 == 3:
                 if i == 3:
                     # 添加首帧图片
@@ -334,15 +353,9 @@ def export_step_by_step_music_video(video_folder):
                 # 第四个宫格视频添加视频轨道
                 start_time, script = add_video_material(start_time, output_video_path, transform_x=0.5,
                                                         transform_y=-0.5)
-
                 # 添加静止图片
                 add_end_frame_image(script, start_time, output_path_end, transform_x=0.5, transform_y=-0.5)
-                seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
-                                         font=Font_type.新青年体,
-                                         style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
-                                         clip_settings=Clip_settings(transform_x=-0.2,
-                                                                     transform_y=0.2))
-                script.add_segment(seg, f"text-index-{idx}")
+
             else:
                 video_material = draft.Video_material(output_video_path)
                 start_time += video_material.duration
