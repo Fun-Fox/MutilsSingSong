@@ -52,7 +52,7 @@ def export_which_animal_is_cutest_video(video_folder):
 
     text_segment = draft.Text_segment("Which cat is the cutest?", trange("0s", "10s"),
                                       font=Font_type.新青年体,
-                                      style=Text_style(size=16.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                      style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
 
     effect_ids = [
