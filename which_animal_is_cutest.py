@@ -28,7 +28,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
     return start_time, script
 
 
-def export_who_is_singing_video(video_folder):
+def export_which_animal_is_cutest_video(video_folder):
     # 获取 video_folder 路径下的所有 .mp4 视频文件
 
     cute_video(video_folder, os.path.join(video_folder, 'trimmed'))
@@ -42,7 +42,7 @@ def export_who_is_singing_video(video_folder):
         os.getenv("LOCALAPPDATA"),
         "JianyingPro\\User Data\\Projects\\com.lveditor.draft"
     )
-    draft_folder_name = '猜猜谁在唱歌'
+    draft_folder_name = '哪只猫最可爱'
     # 保存路径
     DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
@@ -50,13 +50,12 @@ def export_who_is_singing_video(video_folder):
     # 带下划线、位置及大小类似字幕的浅蓝色文本
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
 
-    text_segment = draft.Text_segment("Who is singing?", trange("0s", "10s"),
+    text_segment = draft.Text_segment("Which cat is the cutest?", trange("0s", "10s"),
                                       font=Font_type.新青年体,
-                                      style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                      style=Text_style(size=16.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
 
     effect_ids = [
-        "7351319129124506930",
         "7506817303296675123",
         "7507075178447359282",
         "6896144021568179469",
@@ -144,7 +143,7 @@ def export_who_is_singing_video(video_folder):
     OUTPUT_PATH = os.path.join(root_dir, "output")
     os.makedirs(OUTPUT_PATH, exist_ok=True)
     now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(OUTPUT_PATH, f"猜猜谁在唱歌_{now_date}.mp4")
+    output_path = os.path.join(OUTPUT_PATH, f"哪只猫最可爱_{now_date}.mp4")
     ctrl.export_draft(draft_folder_name, output_path,
                       resolution=Export_resolution.RES_1080P,
                       framerate=Export_framerate.FR_24,

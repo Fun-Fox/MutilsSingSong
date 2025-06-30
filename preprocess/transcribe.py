@@ -178,7 +178,7 @@ def batch_transcribe_audio(audio_files):
 def process_single_audio(whisper, audio_path, output_srt_path):
     """处理单个音频文件"""
     print(f"🔊 处理音频: {audio_path}")
-    segments, _ = whisper.transcribe(audio_path, beam_size=7, condition_on_previous_text=False,word_timestamps=True)
+    segments, _ = whisper.transcribe(audio_path, beam_size=7, condition_on_previous_text=False, word_timestamps=True)
     generate_srt(segments, output_srt_path)
     return output_srt_path
 
@@ -333,33 +333,33 @@ def crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir
     #                 len(segment) == max_segment_length]
 
     for idx, (segment, srt_files) in enumerate(common_segments):
-            # print(f"📦 正在处理第 {idx + 1} 组歌词片段（段数最多）：{segment}")
-            segment_dir = os.path.join(output_dir, f"segment_{idx + 1}")
-            os.makedirs(segment_dir, exist_ok=True)
-            for srt_file in srt_files:
-                video_file = os.path.splitext(os.path.basename(srt_file))[0] + ".mp4"
-                video_path = os.path.join(video_dir, video_file)
+        # print(f"📦 正在处理第 {idx + 1} 组歌词片段（段数最多）：{segment}")
+        segment_dir = os.path.join(output_dir, f"segment_{idx + 1}")
+        os.makedirs(segment_dir, exist_ok=True)
+        for srt_file in srt_files:
+            video_file = os.path.splitext(os.path.basename(srt_file))[0] + ".mp4"
+            video_path = os.path.join(video_dir, video_file)
 
-                if not os.path.exists(video_path):
-                    print(f"❌ 视频文件不存在：{video_path}")
-                    continue
+            if not os.path.exists(video_path):
+                print(f"❌ 视频文件不存在：{video_path}")
+                continue
 
-                try:
-                    video = VideoFileClip(video_path)
-                    time_ranges = locate_segments_in_srt(srt_file, segment, file_lyrics,
-                                                         similarity_threshold=similarity_threshold)
+            try:
+                video = VideoFileClip(video_path)
+                time_ranges = locate_segments_in_srt(srt_file, segment, file_lyrics,
+                                                     similarity_threshold=similarity_threshold)
 
-                    for i, (start, end) in enumerate(time_ranges):
-                        subclip = video.subclipped(start, end)
-                        output_path = os.path.join(segment_dir, f"{os.path.splitext(video_file)[0]}_seg{i + 1}.mp4")
-                        subclip.write_videofile(
-                            output_path,
-                            codec='libx264',
-                            audio_codec='aac'
-                        )
-                        print(f"✅ 已生成裁剪视频：{output_path}")
-                except Exception as e:
-                    print(f"❌ 裁剪失败：{video_file}，错误：{str(e)}")
+                for i, (start, end) in enumerate(time_ranges):
+                    subclip = video.subclipped(start, end)
+                    output_path = os.path.join(segment_dir, f"{os.path.splitext(video_file)[0]}_seg{i + 1}.mp4")
+                    subclip.write_videofile(
+                        output_path,
+                        codec='libx264',
+                        audio_codec='aac'
+                    )
+                    print(f"✅ 已生成裁剪视频：{output_path}")
+            except Exception as e:
+                print(f"❌ 裁剪失败：{video_file}，错误：{str(e)}")
 
 
 def main(video_dir):
@@ -373,7 +373,7 @@ def main(video_dir):
 
     # 3. 查找共同歌词片段（至少4个文件中出现，7段连续）
     common_segments, file_lyrics = find_common_segments(srt_files, min_files=4, min_segment_length=4,
-                                                        max_segment_length=20, similarity_threshold=0.4)
+                                                        max_segment_length=40, similarity_threshold=0.4)
     print(f"✅ 共同歌词片段：{common_segments}")
     if not common_segments:
         print("⚠️ 未找到符合条件的歌词片段")
@@ -381,8 +381,9 @@ def main(video_dir):
 
     # 4. 裁剪视频
     output_dir = os.path.join(root_dir, "output", "cropped")
-    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir,similarity_threshold=0.4)
+    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.4)
 
 
 if __name__ == '__main__':
-    main(os.path.join(root_dir, "pre"))
+    # main(os.path.join(root_dir,  "pre","male"))
+    main(os.path.join(root_dir,  "pre","female"))

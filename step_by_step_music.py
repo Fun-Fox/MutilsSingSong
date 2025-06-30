@@ -1,4 +1,5 @@
 import datetime
+import random
 
 from moviepy import VideoFileClip
 import os
@@ -50,8 +51,8 @@ def export_step_by_step_music_video(video_folder):
     segment_duration = 4
     # if video.duration / 4.5 > 10:
     #     segment_duration = 4.5
-        # if video.duration / 7 > 7:
-        #     segment_duration = 7
+    # if video.duration / 7 > 7:
+    #     segment_duration = 7
 
     MIN_INTERVAL = video.duration / segment_duration - 1
     MAX_INTERVAL = video.duration / segment_duration
@@ -100,17 +101,30 @@ def export_step_by_step_music_video(video_folder):
     DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
 
-
     # 创建剪映草稿
     script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
 
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
-
-    text_segment = draft.Text_segment("Which cover is best?", trange("0s", "10s"),
+    text = "Did you guess correctly?"
+    # "Which cover is best?"
+    text_segment = draft.Text_segment(text, trange("0s", "10s"),
                                       font=Font_type.新青年体,
-                                      style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                      style=Text_style(size=15.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
-    text_segment.add_effect("7351319129124506930")
+    effect_ids = [
+        "7351319129124506930",
+        "7506817303296675123",
+        "7507075178447359282",
+        "6896144021568179469",
+        "6896137924853763336",
+        "7244707954585292064",
+        "7404300897628540211"
+    ]
+
+    # 随机选一个特效
+    selected_effect = random.choice(effect_ids)
+
+    text_segment.add_effect(selected_effect)
     script.add_segment(text_segment, "text-title")
 
     # 2.2 一边保存素材，一边生成剪映草稿
@@ -170,7 +184,6 @@ def export_step_by_step_music_video(video_folder):
 
         start_time = 0
 
-
         if idx == 0:
             seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
@@ -207,8 +220,6 @@ def export_step_by_step_music_video(video_folder):
 
         # 裁剪的节点片段
         for i, (start, end) in enumerate(segments):
-
-
 
             print(f"\n📌 处理第 {i} 个片段：开始时间={start:.2f}s，结束时间={end:.2f}s")
 
@@ -276,8 +287,6 @@ def export_step_by_step_music_video(video_folder):
             sub_clip.write_videofile(output_video_path, codec="libx264", audio_codec="aac", logger=None)
             # sub_clip.close()
             print(f"💾 已保存视频片段至：{output_video_path}")
-
-
 
             if idx == 0 and i % 4 == 0:
                 # 第一个宫格视频添加视频轨道
@@ -386,3 +395,5 @@ def export_step_by_step_music_video(video_folder):
     clipped_video.write_videofile(clipped_output_path, codec="libx264", audio_codec="aac")
 
     print(f"✅ 视频已裁剪并保存至: {clipped_output_path}")
+
+    return clipped_output_path
