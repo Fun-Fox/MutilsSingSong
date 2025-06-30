@@ -6,11 +6,11 @@
 
 *** 5小内互动效果，点赞10个，评论10个 ***
 
-![](/doc/1.png)
+![](/doc/1.jpg)
 
-[*** 国内参考视频内容 ***](https://www.bilibili.com/video/BV1GEgrzmEaz/?vd_source=4d12893260db69d541b5046e851cef83)
+[测试视频效果-查看地址](https://www.bilibili.com/video/BV1GEgrzmEaz/?vd_source=4d12893260db69d541b5046e851cef83)
 
-[](/doc/2.png)
+![](/doc/2.png)
 
 ## 下载模型
 
