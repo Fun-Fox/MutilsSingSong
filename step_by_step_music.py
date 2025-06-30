@@ -7,12 +7,13 @@ import librosa
 import tempfile
 import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
-from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate
+from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
+    Text_style
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def export_video(video_folder):
+def export_step_by_step_music_video(video_folder):
     # === 第一步：从第一个视频提取卡点时间点 ===
 
     # 获取 video_folder 路径下的所有 .mp4 视频文件
@@ -103,6 +104,15 @@ def export_video(video_folder):
     # 创建剪映草稿
     script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
 
+    script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
+
+    text_segment = draft.Text_segment("Which cover is best?", trange("0s", "10s"),
+                                      font=Font_type.新青年体,
+                                      style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                      clip_settings=Clip_settings(transform_y=0))
+    text_segment.add_effect("7351319129124506930")
+    script.add_segment(text_segment, "text-title")
+
     # 2.2 一边保存素材，一边生成剪映草稿
 
     output_folder = os.path.join(video_folder, "captured_frames")
@@ -156,10 +166,13 @@ def export_video(video_folder):
 
         # 添加视频轨道
         script.add_track(draft.Track_type.video, track_name=f'{idx}-{video_file}-video', relative_index=idx * 2 + 100)
+        script.add_track(draft.Track_type.text, track_name=f'text-index-{idx}', relative_index=idx * 2 + 200)
 
         start_time = 0
         # 裁剪的节点片段
         for i, (start, end) in enumerate(segments):
+
+
 
             print(f"\n📌 处理第 {i} 个片段：开始时间={start:.2f}s，结束时间={end:.2f}s")
 
@@ -214,6 +227,8 @@ def export_video(video_folder):
             # 截取片段并保存
             # 示例修复代码
             end = min(end, clip.duration, video.duration)  # 自动限制 end 不超过视频长度
+            if start >= end:
+                continue
             sub_clip = clip.subclipped(start, end)
 
             output_video_path = os.path.join(
@@ -232,6 +247,13 @@ def export_video(video_folder):
                                                         transform_y=0.5)
                 # 添加静止图片
                 add_end_frame_image(script, start_time, output_path_end, transform_x=-0.5, transform_y=0.5)
+
+                seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+                                         font=Font_type.新青年体,
+                                         style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                         clip_settings=Clip_settings(transform_x=-0.2,
+                                                                     transform_y=0.2))
+                script.add_segment(seg, f"text-index-{idx}")
 
             elif idx == 1 and i % 4 == 1:
                 # 第二个宫格视频添加视频轨道
@@ -257,6 +279,13 @@ def export_video(video_folder):
                 # 添加静止图片
                 add_end_frame_image(script, start_time, output_path_end, transform_x=0.5, transform_y=0.5)
 
+                seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+                                         font=Font_type.新青年体,
+                                         style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                         clip_settings=Clip_settings(transform_x=-0.2,
+                                                                     transform_y=0.2))
+                script.add_segment(seg, f"text-index-{idx}")
+
 
 
             elif idx == 2 and i % 4 == 2:
@@ -280,6 +309,13 @@ def export_video(video_folder):
 
                 # 添加静止图片
                 add_end_frame_image(script, start_time, output_path_end, transform_x=-0.5, transform_y=-0.5)
+
+                seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+                                         font=Font_type.新青年体,
+                                         style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                         clip_settings=Clip_settings(transform_x=-0.2,
+                                                                     transform_y=0.2))
+                script.add_segment(seg, f"text-index-{idx}")
             elif idx == 3 and i % 4 == 3:
                 if i == 3:
                     # 添加首帧图片
@@ -301,6 +337,12 @@ def export_video(video_folder):
 
                 # 添加静止图片
                 add_end_frame_image(script, start_time, output_path_end, transform_x=0.5, transform_y=-0.5)
+                seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+                                         font=Font_type.新青年体,
+                                         style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                         clip_settings=Clip_settings(transform_x=-0.2,
+                                                                     transform_y=0.2))
+                script.add_segment(seg, f"text-index-{idx}")
             else:
                 video_material = draft.Video_material(output_video_path)
                 start_time += video_material.duration

@@ -13,6 +13,7 @@ OUTPUT_DIR = os.path.join(root_dir, "output")  # 输出目录
 
 from difflib import SequenceMatcher
 
+
 def are_all_sentences_similar(seg1, seg2, threshold=0.8):
     """
     判断两个歌词片段的每一句是否都相似（每句相似度 >= threshold）
@@ -25,7 +26,6 @@ def are_all_sentences_similar(seg1, seg2, threshold=0.8):
         return False  # 只比较长度相同的片段
 
     return all(SequenceMatcher(None, s1, s2).ratio() >= threshold for s1, s2 in zip(seg1, seg2))
-
 
 
 class WhisperModelSingleton:
@@ -83,14 +83,47 @@ def format_timestamp(seconds):
 
 def generate_srt(segments, output_srt_path):
     with open(output_srt_path, "w", encoding="utf-8") as f:
-        for i, segment in enumerate(segments):
-            start = format_timestamp(segment.start)
-            end = format_timestamp(segment.end)
+        index = 1  # 序号从1开始递增
+
+        for segment in segments:
+            start_time = segment.start
+            end_time = segment.end
             text = segment.text.strip()
 
-            f.write(f"{i + 1}\n")
-            f.write(f"{start} --> {end}\n")
-            f.write(f"{text}\n\n")
+            # 判断是否有逗号
+            if ',' in text:
+                parts = [p.strip() for p in text.split(',') if p.strip()]
+                if len(parts) == 0:
+                    continue
+
+                # 平均分配时间
+                duration = (end_time - start_time) / len(parts)
+                times = []
+
+                for i in range(len(parts)):
+                    part_start = start_time + i * duration
+                    part_end = start_time + (i + 1) * duration
+                    times.append((part_start, part_end))
+
+                # 写入多个字幕条目
+                for part_text, (part_start, part_end) in zip(parts, times):
+                    start = format_timestamp(part_start)
+                    end = format_timestamp(part_end)
+
+                    f.write(f"{index}\n")
+                    f.write(f"{start} --> {end}\n")
+                    f.write(f"{part_text}\n\n")
+                    index += 1
+            else:
+                # 无逗号，保持原样输出
+                start = format_timestamp(segment.start)
+                end = format_timestamp(segment.end)
+
+                f.write(f"{index}\n")
+                f.write(f"{start} --> {end}\n")
+                f.write(f"{text}\n\n")
+                index += 1
+
     print(f"✅ SRT 字幕文件已生成：{output_srt_path}")
 
 
@@ -145,7 +178,7 @@ def batch_transcribe_audio(audio_files):
 def process_single_audio(whisper, audio_path, output_srt_path):
     """处理单个音频文件"""
     print(f"🔊 处理音频: {audio_path}")
-    segments, _ = whisper.transcribe(audio_path, beam_size=5, language="zh", condition_on_previous_text=False)
+    segments, _ = whisper.transcribe(audio_path, beam_size=7, condition_on_previous_text=False,word_timestamps=True)
     generate_srt(segments, output_srt_path)
     return output_srt_path
 
@@ -266,7 +299,7 @@ def find_common_segments(srt_files, min_files=4, min_segment_length=4, max_segme
     return merged_segments, file_lyrics
 
 
-def locate_segments_in_srt(srt_file, target_segment, file_lyrics, similarity_threshold=0.8):
+def locate_segments_in_srt(srt_file, target_segment, file_lyrics, similarity_threshold=0.7):
     lyrics = file_lyrics[srt_file]
     segment_length = len(target_segment)
 
@@ -289,46 +322,44 @@ def locate_segments_in_srt(srt_file, target_segment, file_lyrics, similarity_thr
     return time_ranges
 
 
-
 def crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.8):
     os.makedirs(output_dir, exist_ok=True)
 
     # 找到段数最多的歌词片段的最大段数
-    max_segment_length = max(len(segment) for segment, _ in common_segments)
+    # max_segment_length = sorted([len(segment) for segment, srt_files in common_segments])
+    # #
+    # # # 筛选出所有达到最大段数的歌词片段
+    # max_segments = [(segment, srt_files) for segment, srt_files in common_segments if
+    #                 len(segment) == max_segment_length]
 
-    # 筛选出所有达到最大段数的歌词片段
-    max_segments = [(segment, srt_files) for segment, srt_files in common_segments if
-                    len(segment) == max_segment_length]
+    for idx, (segment, srt_files) in enumerate(common_segments):
+            # print(f"📦 正在处理第 {idx + 1} 组歌词片段（段数最多）：{segment}")
+            segment_dir = os.path.join(output_dir, f"segment_{idx + 1}")
+            os.makedirs(segment_dir, exist_ok=True)
+            for srt_file in srt_files:
+                video_file = os.path.splitext(os.path.basename(srt_file))[0] + ".mp4"
+                video_path = os.path.join(video_dir, video_file)
 
-    for idx, (segment, srt_files) in enumerate(max_segments):
-        print(f"📦 正在处理第 {idx + 1} 组歌词片段（段数最多）：{segment}")
-        segment_dir = os.path.join(output_dir, f"segment_{idx + 1}")
-        os.makedirs(segment_dir, exist_ok=True)
+                if not os.path.exists(video_path):
+                    print(f"❌ 视频文件不存在：{video_path}")
+                    continue
 
-        for srt_file in srt_files:
-            video_file = os.path.splitext(os.path.basename(srt_file))[0] + ".mp4"
-            video_path = os.path.join(video_dir, video_file)
+                try:
+                    video = VideoFileClip(video_path)
+                    time_ranges = locate_segments_in_srt(srt_file, segment, file_lyrics,
+                                                         similarity_threshold=similarity_threshold)
 
-            if not os.path.exists(video_path):
-                print(f"❌ 视频文件不存在：{video_path}")
-                continue
-
-            try:
-                video = VideoFileClip(video_path)
-                time_ranges = locate_segments_in_srt(srt_file, segment, file_lyrics, similarity_threshold=similarity_threshold)
-
-                for i, (start, end) in enumerate(time_ranges):
-                    subclip = video.subclipped(start, end)
-                    output_path = os.path.join(segment_dir, f"{os.path.splitext(video_file)[0]}_seg{i + 1}.mp4")
-                    subclip.write_videofile(
-                        output_path,
-                        codec='libx264',
-                        audio_codec='aac'
-                    )
-                    print(f"✅ 已生成裁剪视频：{output_path}")
-            except Exception as e:
-                print(f"❌ 裁剪失败：{video_file}，错误：{str(e)}")
-
+                    for i, (start, end) in enumerate(time_ranges):
+                        subclip = video.subclipped(start, end)
+                        output_path = os.path.join(segment_dir, f"{os.path.splitext(video_file)[0]}_seg{i + 1}.mp4")
+                        subclip.write_videofile(
+                            output_path,
+                            codec='libx264',
+                            audio_codec='aac'
+                        )
+                        print(f"✅ 已生成裁剪视频：{output_path}")
+                except Exception as e:
+                    print(f"❌ 裁剪失败：{video_file}，错误：{str(e)}")
 
 
 def main(video_dir):
@@ -341,8 +372,8 @@ def main(video_dir):
     print(f"✅ 已生成SRT文件: {srt_files}")
 
     # 3. 查找共同歌词片段（至少4个文件中出现，7段连续）
-    common_segments, file_lyrics = find_common_segments(srt_files, min_files=4, min_segment_length=6,
-                                                        max_segment_length=20, similarity_threshold=0.8)
+    common_segments, file_lyrics = find_common_segments(srt_files, min_files=4, min_segment_length=4,
+                                                        max_segment_length=20, similarity_threshold=0.4)
     print(f"✅ 共同歌词片段：{common_segments}")
     if not common_segments:
         print("⚠️ 未找到符合条件的歌词片段")
@@ -350,7 +381,7 @@ def main(video_dir):
 
     # 4. 裁剪视频
     output_dir = os.path.join(root_dir, "output", "cropped")
-    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir)
+    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir,similarity_threshold=0.4)
 
 
 if __name__ == '__main__':
