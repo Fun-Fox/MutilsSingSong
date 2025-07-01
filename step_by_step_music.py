@@ -9,7 +9,7 @@ import tempfile
 import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
-    Text_style, Mask_type
+    Text_style
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -20,13 +20,72 @@ def export_step_by_step_music_video(video_folder):
     # 获取 video_folder 路径下的所有 .mp4 视频文件
     video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
 
+    # 检查是否存在至少一个视频文件
+    if video_files:
+        # 取第一个视频文件作为 first_video_path
+        first_video_path = os.path.join(video_folder, video_files[0])
+        print(f"✅ 第一个视频路径为: {first_video_path}")
+    else:
+        raise FileNotFoundError("未找到任何 .mp4 视频文件")
 
-    segments = []
-    for  video_path in video_files:
-        video = VideoFileClip(video_path)
-        # 每个视频片段的长度，不需要进行分析音频节点
-        segments.append((0, video.duration))
+    # 加载第一个视频
+    print("📘 正在加载第一个视频...")
+    video = VideoFileClip(first_video_path)
 
+    # 创建临时目录保存音频
+    temp_dir = tempfile.mkdtemp()
+    audio_path = os.path.join(temp_dir, "audio.wav")
+    print(f"📁 已创建临时音频文件夹: {temp_dir}")
+
+    # 提取音频并保存为 WAV 文件
+    print("🎵 正在提取音频...")
+    video.audio.write_audiofile(audio_path, codec='pcm_s16le')
+
+    # 提取音频并检测节拍
+    print("🎼 正在分析音频节奏...")
+    y, sr = librosa.load(audio_path, sr=None)
+    tempo, beat_frames = librosa.beat.beat_track(y=y, sr=sr)
+    beat_times = librosa.frames_to_time(beat_frames, sr=sr)
+
+    # 设置最小间隔为 5 秒，并过滤密集卡点
+    segment_duration = 4
+    # if video.duration / 4.5 > 10:
+    #     segment_duration = 4.5
+    # if video.duration / 7 > 7:
+    #     segment_duration = 7
+
+    MIN_INTERVAL = video.duration / segment_duration - 1
+    MAX_INTERVAL = video.duration / segment_duration
+    filtered_beat_times = []
+    last_time = -MIN_INTERVAL
+
+    for time in sorted(beat_times):
+        interval = time - last_time
+        if interval >= MIN_INTERVAL:
+            # 如果间隔超过最大间隔，可以插入一个中间点
+            while interval > MAX_INTERVAL:
+                last_time += MAX_INTERVAL
+                filtered_beat_times.append(last_time)
+                interval = time - last_time
+            filtered_beat_times.append(time)
+            last_time = time
+
+    rounded_beat_times = [round(t, 2) for t in filtered_beat_times]
+    print(f"✅ 检测到节奏卡点时间（秒）：{rounded_beat_times}")
+
+    # 构造片段区间
+    segments = [(rounded_beat_times[i], rounded_beat_times[i + 1]) for i in range(len(rounded_beat_times) - 1)]
+
+    if filtered_beat_times:
+        last_time = rounded_beat_times[-1]
+        if last_time < video.duration:  # 确保还有剩余内容
+            segments.append((last_time, video.duration))
+            print(f"📎 已添加尾段：{last_time:.2f}s 到 {video.duration:.2f}s")
+    print(f"✂️ 已构造视频{len(segments)}个片段区间：{segments}")
+
+    # 删除临时音频文件
+    shutil.rmtree(temp_dir)
+    print("🗑️ 已删除临时音频文件")
 
     # === 第二步：遍历所有视频，按上述片段截图 ===
     # 2.1 剪映草稿生成
@@ -87,8 +146,6 @@ def export_step_by_step_music_video(video_folder):
                                                                         transform_x=transform_x,
                                                                         transform_y=transform_y))  # 与素材等长
         print(f"🎬 添加到视频轨道{idx}-{video_file}-video")
-        video_segment.add_mask(Mask_type.矩形, size=0.8, rect_width=0.8, rotation=45)
-
         # 添加到轨道
         script.add_segment(video_segment, f'{idx}-{video_file}-video', )
         start_time += video_material.duration

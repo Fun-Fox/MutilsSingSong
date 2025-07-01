@@ -24,7 +24,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
                                                                     transform_y=transform_y))  # 与素材等长
     # 添加到轨道
     # 添加一个线性蒙版，中心点在素材的(100, 0)像素处，顺时针旋转45度
-    video_segment.add_mask(Mask_type.矩形, size=0.8, rect_width=0.8, rotation=45)
+    video_segment.add_mask(Mask_type.矩形, size=0.8, rect_width=0.8, round_corner=45)
 
     script.add_segment(video_segment, f'{track_name}', )
     start_time += video_material.duration

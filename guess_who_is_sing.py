@@ -8,7 +8,7 @@ from sympy import false
 import pyJianYingDraft.pyJianYingDraft as draft
 from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
-    Export_framerate, Text_loop_anim
+    Export_framerate, Text_loop_anim, Mask_type
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,7 +23,10 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
                                                                     transform_x=transform_x,
                                                                     transform_y=transform_y))  # 与素材等长
     # 添加到轨道
+    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-100, size=0.8, rect_width=0.8, round_corner=45)
+
     script.add_segment(video_segment, f'{track_name}', )
+
     start_time += video_material.duration
     return start_time, script
 
