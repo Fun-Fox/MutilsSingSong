@@ -86,15 +86,14 @@ def export_who_is_singing_video(video_folder):
         # 添加视频轨道
 
         script.add_track(draft.Track_type.video, track_name=f'{idx}-{video_file}-video', relative_index=idx * 2 + 10)
-        emojis = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼"]
-        random_emoji = random.choice(emojis)
+
         if idx == 0:
             # 第一个宫格视频添加视频轨道
             start_time, script = add_video_material(0, video_path, transform_x=-0.5,
                                                     transform_y=0.5, track_name=f"{idx}-{video_file}-video",
                                                     script=script, volume=values[idx])
 
-            seg = draft.Text_segment(f"{idx + 1} {random_emoji}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{idx + 1} ", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=-0.2,
@@ -109,7 +108,7 @@ def export_who_is_singing_video(video_folder):
                                                     track_name=f"{idx}-{video_file}-video", script=script,
                                                     volume=values[idx])
 
-            seg = draft.Text_segment(f"{idx + 1} {random_emoji}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{idx + 1} ", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=0.2, transform_y=0.2))
@@ -124,7 +123,7 @@ def export_who_is_singing_video(video_folder):
                                                     transform_y=-0.5,
                                                     track_name=f"{idx}-{video_file}-video", script=script,
                                                     volume=values[idx])
-            seg = draft.Text_segment(f"{idx + 1} {random_emoji}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{idx + 1} ", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=-0.2,
@@ -139,7 +138,7 @@ def export_who_is_singing_video(video_folder):
                                                     transform_y=-0.5,
                                                     track_name=f"{idx}-{video_file}-video", script=script,
                                                     volume=values[idx])
-            seg = draft.Text_segment(f"{idx + 1} {random_emoji}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{idx + 1} ", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=0.2,
