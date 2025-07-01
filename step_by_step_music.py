@@ -54,7 +54,7 @@ def export_step_by_step_music_video(video_folder):
     # if video.duration / 7 > 7:
     #     segment_duration = 7
 
-    MIN_INTERVAL = video.duration / segment_duration - 1
+    MIN_INTERVAL = video.duration / segment_duration-0.5
     MAX_INTERVAL = video.duration / segment_duration
     filtered_beat_times = []
     last_time = -MIN_INTERVAL

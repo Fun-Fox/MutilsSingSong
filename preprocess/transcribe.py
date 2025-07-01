@@ -178,7 +178,7 @@ def batch_transcribe_audio(audio_files):
 def process_single_audio(whisper, audio_path, output_srt_path):
     """处理单个音频文件"""
     print(f"🔊 处理音频: {audio_path}")
-    segments, _ = whisper.transcribe(audio_path, beam_size=7, condition_on_previous_text=False, word_timestamps=True)
+    segments, _ = whisper.transcribe(audio_path, beam_size=7,language="en", condition_on_previous_text=False, word_timestamps=True)
     generate_srt(segments, output_srt_path)
     return output_srt_path
 
@@ -373,7 +373,7 @@ def main(video_dir):
 
     # 3. 查找共同歌词片段（至少4个文件中出现，7段连续）
     common_segments, file_lyrics = find_common_segments(srt_files, min_files=4, min_segment_length=4,
-                                                        max_segment_length=40, similarity_threshold=0.4)
+                                                        max_segment_length=40, similarity_threshold=0.3)
     print(f"✅ 共同歌词片段：{common_segments}")
     if not common_segments:
         print("⚠️ 未找到符合条件的歌词片段")
@@ -381,9 +381,11 @@ def main(video_dir):
 
     # 4. 裁剪视频
     output_dir = os.path.join(root_dir, "output", "cropped")
-    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.4)
+    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.3)
 
 
 if __name__ == '__main__':
     # main(os.path.join(root_dir,  "pre","male"))
-    main(os.path.join(root_dir,  "pre","female"))
+    main(os.path.join(root_dir,  "pre"))
+    # main(os.path.join(root_dir,  "pre"))
+    # main(os.path.join(root_dir,  "pre","han"))
