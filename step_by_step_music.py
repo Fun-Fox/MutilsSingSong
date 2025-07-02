@@ -54,7 +54,7 @@ def export_step_by_step_music_video(video_folder):
     # if video.duration / 7 > 7:
     #     segment_duration = 7
 
-    MIN_INTERVAL = video.duration / segment_duration-0.5
+    MIN_INTERVAL = video.duration / segment_duration - 0.5
     MAX_INTERVAL = video.duration / segment_duration
     filtered_beat_times = []
     last_time = -MIN_INTERVAL
@@ -187,7 +187,8 @@ def export_step_by_step_music_video(video_folder):
         if idx == 0:
             seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                                      bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=0.2))
             script.add_segment(seg, f"text-index-{idx}")
@@ -196,7 +197,8 @@ def export_step_by_step_music_video(video_folder):
 
             seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                                      bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2, transform_y=0.2))
             script.add_segment(seg, f"text-index-{idx}")
 
@@ -204,7 +206,8 @@ def export_step_by_step_music_video(video_folder):
 
             seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                                      bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=-0.2))
             script.add_segment(seg, f"text-index-{idx}")
@@ -213,7 +216,8 @@ def export_step_by_step_music_video(video_folder):
 
             seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                                      bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
             script.add_segment(seg, f"text-index-{idx}")
@@ -377,7 +381,7 @@ def export_step_by_step_music_video(video_folder):
     OUTPUT_PATH = os.path.join(root_dir, "output")
     os.makedirs(OUTPUT_PATH, exist_ok=True)
     now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(OUTPUT_PATH, f"四宫格接力唱歌_{now_date}.mp4")
+    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mp4")
     ctrl.export_draft(draft_folder_name, output_path,
                       resolution=Export_resolution.RES_1080P,
                       framerate=Export_framerate.FR_24,
@@ -391,7 +395,7 @@ def export_step_by_step_music_video(video_folder):
     clipped_video = output_video.subclipped(0, video.duration)
 
     # 保存裁剪后的视频
-    clipped_output_path = os.path.join(OUTPUT_PATH, f"四宫格接力唱歌_{now_date}_裁剪版.mp4")
+    clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mp4")
     clipped_video.write_videofile(clipped_output_path, codec="libx264", audio_codec="aac")
 
     print(f"✅ 视频已裁剪并保存至: {clipped_output_path}")

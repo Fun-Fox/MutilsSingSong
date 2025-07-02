@@ -1,0 +1,193 @@
+import datetime
+import random
+from moviepy import VideoFileClip
+import os
+import cv2
+import pyJianYingDraft.pyJianYingDraft as draft
+from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
+    Text_style
+
+root_dir = os.path.dirname(os.path.abspath(__file__))
+
+
+def extract_video_frames(video_path):
+    """提取视频的第一帧和最后一帧作为图片"""
+    cap = cv2.VideoCapture(video_path)
+    success, frame = cap.read()
+    if not success:
+        raise ValueError(f"无法读取视频 {video_path}")
+
+    first_frame_path = os.path.splitext(video_path)[0] + "_first.jpg"
+    cv2.imwrite(first_frame_path, frame)
+
+    last_frame = None
+    while success:
+        last_frame = frame
+        success, frame = cap.read()
+    cap.release()
+
+    last_frame_path = os.path.splitext(video_path)[0] + "_last.jpg"
+    cv2.imwrite(last_frame_path, last_frame)
+
+    return first_frame_path, last_frame_path
+
+
+def add_image(script, start_time, end_time, image_path, track_name, relative_index, transform_x, transform_y):
+    """添加图片到剪映轨道"""
+    script.add_track(draft.Track_type.video, track_name=track_name, relative_index=relative_index)
+    video_material = draft.Video_material(image_path)
+    video_segment = draft.Video_segment(
+        video_material,
+        target_timerange=draft.Timerange(start_time, end_time),
+        source_timerange=draft.Timerange(0, video_material.duration),
+        clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=transform_x, transform_y=transform_y)
+    )
+    script.add_segment(video_segment, track_name)
+    print(f"🖼️ 图片添加到轨道: {track_name}")
+
+
+def add_video_material(script, track_name, relative_index, video_path, start_time, transform_x, transform_y):
+    """添加视频素材到剪映轨道"""
+    video_material = draft.Video_material(video_path)
+    print(f"🎬 添加视频：{video_path}，开始时间 {start_time}，时长 {video_material.duration}")
+    video_segment = draft.Video_segment(
+        video_material,
+        target_timerange=draft.Timerange(start_time, video_material.duration),
+        source_timerange=draft.Timerange(0, video_material.duration),
+        clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=transform_x, transform_y=transform_y)
+    )
+    script.add_track(draft.Track_type.video, track_name=track_name, relative_index=relative_index)
+    script.add_segment(video_segment, track_name)
+    return start_time + video_material.duration
+
+
+def export_sing_a_song_video(video_folder):
+    # 获取视频文件列表
+    video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
+
+    base_folder = os.path.join(
+        os.getenv("LOCALAPPDATA"),
+        "JianyingPro\\User Data\\Projects\\com.lveditor.draft"
+    )
+    draft_folder_name = '多人唱歌'
+    DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
+    os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
+
+    script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
+
+    # 添加标题文本
+    text1 = "The Ultimate Karaoke Battle"
+    text2 = "🏆 Battle of the Voices – Who Wins?"
+    script.add_track(draft.Track_type.text, track_name="text-title", relative_index=100)
+    effect_ids = [
+        "7351319129124506930", "7506817303296675123", "7507075178447359282",
+        "6896144021568179469", "6896137924853763336", "7244707954585292064",
+        "7404300897628540211"
+    ]
+    selected_effect = random.choice(effect_ids)
+    text_segment_1 = draft.Text_segment(
+        text1,
+        trange("0s", "10s"),
+        font=Font_type.新青年体,
+        style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+        clip_settings=Clip_settings(transform_y=0)
+    )
+
+    text_segment_2 = draft.Text_segment(
+        text2,
+        trange("13s", "120s"),
+        font=Font_type.新青年体,
+        style=Text_style(size=10.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+        clip_settings=Clip_settings(transform_y=0)
+    )
+    text_segment_1.add_effect(selected_effect)
+    selected_effect = random.choice(effect_ids)
+    text_segment_2.add_effect(selected_effect)
+    script.add_segment(text_segment_1, "text-title")
+    script.add_segment(text_segment_2, "text-title")
+
+    total_duration = 0
+    start_time = 0
+    # 增加封面轨道
+    script.add_track(draft.Track_type.video, track_name=f'封面', relative_index=0)
+
+    for idx, video_file in enumerate(video_files, start=1):
+        full_video_path = os.path.join(video_folder, video_file)
+        first_frame, last_frame = extract_video_frames(full_video_path)
+
+        track_video_name = f'{idx}-{video_file}-video'
+        track_relative_index = idx * 2 + 100
+        video_material = draft.Video_material(full_video_path)
+        video_duration = video_material.duration
+        script.add_track(draft.Track_type.text, track_name=f'text-index-{idx}', relative_index=idx * 2 + 200)
+
+        if idx == 1:
+            seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
+                                     font=Font_type.新青年体,
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,bold=True),
+                                     clip_settings=Clip_settings(transform_x=-0.2,
+                                                                 transform_y=0.2))
+            script.add_segment(seg, f"text-index-{idx}")
+            start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
+                                            -0.5, 0.5)
+            add_image(script, start_time, start_time + 80000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, -0.5,
+                      0.5)
+        elif idx == 2:
+            seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
+                                     font=Font_type.新青年体,
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,bold=True),
+                                     clip_settings=Clip_settings(transform_x=0.2,
+                                                                 transform_y=0.2))
+            script.add_segment(seg, f"text-index-{idx}")
+            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, 0.5)
+            start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
+                                            0.5, 0.5)
+            add_image(script, start_time, start_time + 50000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, 0.5,
+                      0.5)
+        elif idx == 3:
+            seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
+                                     font=Font_type.新青年体,
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,bold=True),
+                                     clip_settings=Clip_settings(transform_x=-0.2,
+                                                                 transform_y=-0.2))
+            script.add_segment(seg, f"text-index-{idx}")
+            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, -0.5, -0.5)
+            start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
+                                            -0.5, -0.5)
+            add_image(script, start_time, start_time + 50000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, -0.5,
+                      -0.5)
+        elif idx == 4:
+            seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
+                                     font=Font_type.新青年体,
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,bold=True),
+                                     clip_settings=Clip_settings(transform_x=0.2,
+                                                                 transform_y=-0.2))
+            script.add_segment(seg, f"text-index-{idx}")
+            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, -0.5)
+            start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
+                                            0.5, -0.5)
+
+        total_duration += video_duration
+
+    script.dump(DUMP_PATH)
+    print("\n🎉 所有视频片段及截图已成功处理！")
+
+    ctrl = draft.Jianying_controller()
+    OUTPUT_PATH = os.path.join(root_dir, "output")
+    os.makedirs(OUTPUT_PATH, exist_ok=True)
+    now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mp4")
+
+    ctrl.export_draft(draft_folder_name, output_path,
+                      resolution=Export_resolution.RES_1080P,
+                      framerate=Export_framerate.FR_24)
+    print(f"导出视频完成: {output_path}")
+
+    # 裁剪视频
+    output_video = VideoFileClip(output_path)
+    clipped_video = output_video.subclipped(0, total_duration / 1e6)
+    clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mp4")
+    clipped_video.write_videofile(clipped_output_path, codec="libx264", audio_codec="aac")
+    print(f"✅ 视频已裁剪并保存至: {clipped_output_path}")
+
+    return clipped_output_path
