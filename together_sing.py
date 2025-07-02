@@ -26,7 +26,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
     return start_time + video_material.duration, script
 
 
-def export_together_sing_video(video_folder, values=[0.0, 0.0, 0.0, 0.0]):
+def export_together_sing_video(video_folder):
     # Step 1: 预处理视频（裁剪）
     cute_video(video_folder, os.path.join(video_folder, 'trimmed'))
 
@@ -84,6 +84,8 @@ def export_together_sing_video(video_folder, values=[0.0, 0.0, 0.0, 0.0]):
                 break
 
     # Step 6: 合并音频
+    print(f"🎵 选择的音频片段为：{selected_segments}")
+
     final_audio = sum(AudioSegment.from_mp3(path) for path in selected_segments)
     final_audio_path = os.path.join(audio_dir, "final_audio.mp3")
     final_audio.export(final_audio_path, format="mp3")
@@ -146,11 +148,13 @@ def export_together_sing_video(video_folder, values=[0.0, 0.0, 0.0, 0.0]):
         video_material = draft.Video_material(video_path)
         video_segment = draft.Video_segment(
             video_material,
-            draft.Timerange(cumulative_time, video_material.duration),
+            draft.Timerange(0, video_material.duration),
             source_timerange=draft.Timerange(0, video_material.duration),
+            volume=0,
             clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
                                         transform_x={0: -0.5, 1: 0.5, 2: -0.5, 3: 0.5}.get(idx, 0),
                                         transform_y={0: 0.5, 1: 0.5, 2: -0.5, 3: -0.5}.get(idx, 0))
+
         )
         script.add_segment(video_segment, track_name)
 
