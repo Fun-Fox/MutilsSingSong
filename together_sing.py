@@ -110,14 +110,14 @@ def export_together_sing_video(video_folder):
         clip_settings=Clip_settings(transform_y=0)
     )
 
-    # 添加标题文本
-    text_segment_2 = draft.Text_segment(
-        "Let's find out!",
-        trange("13s", "3s"),
-        font=Font_type.新青年体,
-        style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
-        clip_settings=Clip_settings(transform_y=0)
-    )
+    # # 添加标题文本
+    # text_segment_2 = draft.Text_segment(
+    #     "Let's find out!",
+    #     trange("13s", "3s"),
+    #     font=Font_type.新青年体,
+    #     style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+    #     clip_settings=Clip_settings(transform_y=0)
+    # )
     script.add_track(draft.Track_type.text, track_name="text-title", relative_index=100)
 
     effect_ids = [
@@ -132,9 +132,9 @@ def export_together_sing_video(video_folder):
     selected_effect = random.choice(effect_ids)
     text_segment_1.add_effect(selected_effect)
     script.add_segment(text_segment_1, "text-title")
-    selected_effect = random.choice(effect_ids)
-    text_segment_2.add_effect(selected_effect)
-    script.add_segment(text_segment_2, "text-title")
+    # selected_effect = random.choice(effect_ids)
+    # text_segment_2.add_effect(selected_effect)
+    # script.add_segment(text_segment_2, "text-title")
 
     # Step 8: 添加音频轨道（完整拼接的音频）
     final_audio_material = draft.Audio_material(final_audio_path)
