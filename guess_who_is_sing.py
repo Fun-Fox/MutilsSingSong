@@ -8,7 +8,7 @@ from sympy import false
 import pyJianYingDraft.pyJianYingDraft as draft
 from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
-    Export_framerate
+    Export_framerate, Text_loop_anim, Mask_type
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,7 +23,10 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
                                                                     transform_x=transform_x,
                                                                     transform_y=transform_y))  # 与素材等长
     # 添加到轨道
+    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-100, size=0.8, rect_width=0.8, round_corner=45)
+
     script.add_segment(video_segment, f'{track_name}', )
+
     start_time += video_material.duration
     return start_time, script
 
@@ -31,7 +34,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
 def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
     # 获取 video_folder 路径下的所有 .mp4 视频文件
 
-    cute_video(video_folder, os.path.join(video_folder, 'trimmed'))
+    cute_video(video_folder, os.path.join(video_folder, 'trimmed'),is_min=True)
 
     video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")]
 
@@ -89,11 +92,12 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                                     transform_y=0.5, track_name=f"{idx}-{video_file}-video",
                                                     script=script, volume=values[idx])
 
-            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{idx + 1} ", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=0.2))
+            seg.add_animation(Text_loop_anim.心跳)
             script.add_segment(seg, f"text-index-{idx}")
 
         elif idx == 1:
@@ -103,10 +107,12 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                                     track_name=f"{idx}-{video_file}-video", script=script,
                                                     volume=values[idx])
 
-            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{idx + 1} ", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=0.2, transform_y=0.2))
+            seg.add_animation(Text_loop_anim.心跳)
+
             script.add_segment(seg, f"text-index-{idx}")
 
         elif idx == 2:
@@ -116,11 +122,13 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                                     transform_y=-0.5,
                                                     track_name=f"{idx}-{video_file}-video", script=script,
                                                     volume=values[idx])
-            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{idx + 1} ", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=-0.2))
+            seg.add_animation(Text_loop_anim.心跳)
+
             script.add_segment(seg, f"text-index-{idx}")
 
         elif idx == 3:
@@ -129,11 +137,13 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                                     transform_y=-0.5,
                                                     track_name=f"{idx}-{video_file}-video", script=script,
                                                     volume=values[idx])
-            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{idx + 1} ", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
+            seg.add_animation(Text_loop_anim.心跳)
+
             script.add_segment(seg, f"text-index-{idx}")
     script.dump(DUMP_PATH)
 
@@ -143,7 +153,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
     OUTPUT_PATH = os.path.join(root_dir, "output")
     os.makedirs(OUTPUT_PATH, exist_ok=True)
     now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(OUTPUT_PATH, f"猜猜谁在唱歌_{now_date}.mp4")
+    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mp4")
     ctrl.export_draft(draft_folder_name, output_path,
                       resolution=Export_resolution.RES_1080P,
                       framerate=Export_framerate.FR_24,
