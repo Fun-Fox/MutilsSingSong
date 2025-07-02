@@ -105,16 +105,16 @@ def export_together_sing_video(video_folder):
         "What’s the singing order?",
         trange("0s", "10s"),
         font=Font_type.新青年体,
-        style=Text_style(size=16.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+        style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
 
     # 添加标题文本
     text_segment_2 = draft.Text_segment(
         "Let's find out!",
-        trange("13s", "10s"),
+        trange("13s", "3s"),
         font=Font_type.新青年体,
-        style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+        style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
     script.add_track(draft.Track_type.text, track_name="text-title", relative_index=100)
