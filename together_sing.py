@@ -2,7 +2,7 @@ import datetime
 import os
 import random
 
-from moviepy import VideoFileClip, AudioFileClip
+from moviepy import VideoFileClip, concatenate_audioclips, AudioFileClip
 from pydub import AudioSegment
 
 import pyJianYingDraft.pyJianYingDraft as draft
@@ -31,68 +31,73 @@ def export_together_sing_video(video_folder, values=[0.0, 0.0, 0.0, 0.0]):
     cute_video(video_folder, os.path.join(video_folder, 'trimmed'))
 
     # Step 2: 获取视频文件列表
-    video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")]
+    video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")][:4]
+    num_videos = len(video_files)
 
     # Step 3: 创建 audio 文件夹
     audio_dir = os.path.join(video_folder, 'audio')
     os.makedirs(audio_dir, exist_ok=True)
 
-    # Step 4: 提取并分割第一个视频的音频
-    first_video_path = os.path.join(video_folder, "trimmed", video_files[0])
-    clip = VideoFileClip(first_video_path)
-    video_duration_ms = clip.duration * 1000  # 转为毫秒
-    segment_duration = int(video_duration_ms // 4)  # 每段长度（毫秒）
+    # Step 4: 提取并分割每个视频的音频
+    all_segments = []  # 存储每个视频的4段音频路径
+    segment_durations = []  # 每段音频长度（微秒）
 
-    # 提取音频
-    video_clip = VideoFileClip(first_video_path)
-    audio_clip = video_clip.audio
-    original_audio_path = os.path.join(audio_dir, f"{os.path.splitext(video_files[0])[0]}_full.mp3")
-    audio_clip.write_audiofile(original_audio_path, bitrate="192k")
+    for idx, video_file in enumerate(video_files):
+        video_path = os.path.join(video_folder, "trimmed", video_file)
+        clip = VideoFileClip(video_path)
+        duration_ms = int(clip.duration * 1000)
+        segment_duration = duration_ms // 4
 
-    # 使用 pydub 加载并分割音频
-    full_audio = AudioSegment.from_mp3(original_audio_path)
-    segments = [
-        full_audio[i * segment_duration: (i + 1) * segment_duration]
-        for i in range(4)
-    ]
+        # 提取音频
+        audio_clip = clip.audio
+        full_audio_path = os.path.join(audio_dir, f"{os.path.splitext(video_file)[0]}_full.mp3")
+        audio_clip.write_audiofile(full_audio_path, bitrate="192k")
 
-    # Step 5: 保存每个视频对应的音频段
-    audio_segments_info = []
-    cumulative_time = 0  # 累计开始时间（单位：微秒）
+        # 分割音频
+        full_audio = AudioSegment.from_mp3(full_audio_path)
+        segments = [
+            full_audio[i * segment_duration: (i + 1) * segment_duration]
+            for i in range(4)
+        ]
 
-    for idx, video_file in enumerate(video_files[:4]):  # 只处理前4个视频
-        segment_idx = idx
-        custom_audio_segment = segments[segment_idx]
+        # 保存音频段
+        saved_segments = []
+        for seg_idx, segment in enumerate(segments):
+            seg_path = os.path.join(audio_dir, f"{os.path.splitext(video_file)[0]}_segment{seg_idx + 1}.mp3")
+            segment.export(seg_path, format="mp3")
+            saved_segments.append(seg_path)
 
-        # 构建音频文件名
-        video_name_base = os.path.splitext(video_file)[0]
-        custom_audio_path = os.path.join(audio_dir, f"{video_name_base}_segment{segment_idx + 1}.mp3")
+        all_segments.append(saved_segments)
+        segment_durations.append(segment.duration_seconds * 1_000_000)  # 微秒
 
-        # 导出音频
-        custom_audio_segment.export(custom_audio_path, format="mp3")
-        print(f"🎵 音频已保存：{custom_audio_path}")
+    # Step 5: 随机选择每个段来自哪个视频
+    selected_segments = []
+    used_combinations = set()
 
-        # 记录音频信息
-        duration_us = int(custom_audio_segment.duration_seconds * 1_000_000)
-        audio_segments_info.append({
-            "track_name": f"audio-track-{idx}",
-            "file_path": custom_audio_path,
-            "start_time": cumulative_time,
-            "duration": duration_us
-        })
+    for seg_idx in range(4):  # 共4段
+        while True:
+            video_idx = random.randint(0, num_videos - 1)
+            key = f"{video_idx}-{seg_idx}"
+            if key not in used_combinations:
+                used_combinations.add(key)
+                selected_segments.append(all_segments[video_idx][seg_idx])
+                break
 
-        # 更新累计时间
-        cumulative_time += duration_us
+    # Step 6: 合并音频
+    final_audio = sum(AudioSegment.from_mp3(path) for path in selected_segments)
+    final_audio_path = os.path.join(audio_dir, "final_audio.mp3")
+    final_audio.export(final_audio_path, format="mp3")
+    print(f"🎵 最终音频已生成：{final_audio_path}")
 
-    # Step 6: 创建剪映草稿
+    # Step 7: 创建剪映草稿
     base_folder = os.path.join(
         os.getenv("LOCALAPPDATA"),
         "JianyingPro\\User Data\\Projects\\com.lveditor.draft"
     )
-    draft_folder_name = '猜猜谁在唱歌'
+    draft_folder_name = '找到唱歌的顺序'
     DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
-    script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
+    script = draft.Script_file(1080, 1920)
 
     # 添加标题文本
     text_segment = draft.Text_segment(
@@ -117,75 +122,43 @@ def export_together_sing_video(video_folder, values=[0.0, 0.0, 0.0, 0.0]):
     script.add_track(draft.Track_type.text, track_name="text-title", relative_index=100)
     script.add_segment(text_segment, "text-title")
 
-    # Step 7: 添加视频和音频轨道
-    for idx, video_file in enumerate(video_files[:4]):  # 只处理前4个视频
+    # Step 8: 添加音频轨道（完整拼接的音频）
+    final_audio_material = draft.Audio_material(final_audio_path)
+    final_audio_segment = draft.Audio_segment(
+        final_audio_material,
+        draft.Timerange(0, final_audio_material.duration)
+    )
+    script.add_track(draft.Track_type.audio, track_name="final-audio-track", relative_index=10)
+    script.add_segment(final_audio_segment, "final-audio-track")
+
+    # Step 9: 添加视频轨道（仅画面）
+    cumulative_time = 0
+    for idx, video_file in enumerate(video_files):
         video_path = os.path.join(video_folder, "trimmed", video_file)
-        print(f"\n🎬 正在处理视频：{video_file}")
         clip = VideoFileClip(video_path)
-        print(f"⏱️ 视频总时长：{clip.duration:.2f} 秒")
+        duration_us = int(clip.duration * 1_000_000)
 
         # 添加视频轨道
-        script.add_track(
-            draft.Track_type.video,
-            track_name=f'{idx}-{video_file}-video',
-            relative_index=idx * 2 + 10
+        track_name = f'{idx}-{video_file}-video'
+        script.add_track(draft.Track_type.video, track_name=track_name, relative_index=idx * 2 + 10)
+
+        # 添加视频素材
+        video_material = draft.Video_material(video_path)
+        video_segment = draft.Video_segment(
+            video_material,
+            draft.Timerange(cumulative_time, video_material.duration),
+            source_timerange=draft.Timerange(0, video_material.duration),
+            clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
+                                        transform_x={0: -0.5, 1: 0.5, 2: -0.5, 3: 0.5}.get(idx, 0),
+                                        transform_y={0: 0.5, 1: 0.5, 2: -0.5, 3: -0.5}.get(idx, 0))
         )
-
-        # 添加音频轨道
-        if idx < len(audio_segments_info):
-            audio_info = audio_segments_info[idx]
-            audio_material = draft.Audio_material(audio_info["file_path"])
-            audio_segment = draft.Audio_segment(
-                audio_material,
-                draft.Timerange(audio_info["start_time"],  audio_material.duration)
-            )
-            script.add_track(
-                draft.Track_type.audio,
-                track_name=f'audio-track-{idx}',
-                relative_index=idx + 1
-            )
-            script.add_segment(audio_segment, f'audio-track-{idx}')
-
-        # 添加视频片段
-        transform = {
-            0: (-0.5, 0.5),
-            1: (0.5, 0.5),
-            2: (-0.5, -0.5),
-            3: (0.5, -0.5)
-        }.get(idx, (0.0, 0.0))
-
-        transform_x, transform_y = transform
-        start_time = 0
-
-        if idx == 0:
-            start_time, script = add_video_material(
-                0, video_path, transform_x, transform_y,
-                f"{idx}-{video_file}-video", script, values[idx]
-            )
-        elif idx == 1:
-            prev_duration = audio_segments_info[0]["duration"]
-            start_time, script = add_video_material(
-                prev_duration, video_path, transform_x, transform_y,
-                f"{idx}-{video_file}-video", script, values[idx]
-            )
-        elif idx == 2:
-            prev_duration = sum(seg["duration"] for seg in audio_segments_info[:2])
-            start_time, script = add_video_material(
-                prev_duration, video_path, transform_x, transform_y,
-                f"{idx}-{video_file}-video", script, values[idx]
-            )
-        elif idx == 3:
-            prev_duration = sum(seg["duration"] for seg in audio_segments_info[:3])
-            start_time, script = add_video_material(
-                prev_duration, video_path, transform_x, transform_y,
-                f"{idx}-{video_file}-video", script, values[idx]
-            )
+        script.add_segment(video_segment, track_name)
 
         # 添加序号文字
         script.add_track(draft.Track_type.text, track_name=f'text-index-{idx}', relative_index=idx * 2 + 99)
         seg = draft.Text_segment(
             str(idx + 1),
-            trange("0s", f"{int(clip.duration)}s"),
+            trange(0, video_material.duration),
             font=Font_type.新青年体,
             style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
             clip_settings=Clip_settings(
@@ -195,7 +168,9 @@ def export_together_sing_video(video_folder, values=[0.0, 0.0, 0.0, 0.0]):
         )
         script.add_segment(seg, f"text-index-{idx}")
 
-    # Step 8: 保存脚本并导出视频
+        cumulative_time += duration_us
+
+    # Step 10: 保存脚本并导出视频
     script.dump(DUMP_PATH)
     print("\n🎉 所有视频片段及截图已成功处理！")
 
