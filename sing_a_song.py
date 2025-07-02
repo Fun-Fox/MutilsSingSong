@@ -4,6 +4,7 @@ from moviepy import VideoFileClip
 import os
 import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
+from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
     Text_style
 
@@ -62,7 +63,10 @@ def add_video_material(script, track_name, relative_index, video_path, start_tim
 
 
 def export_sing_a_song_video(video_folder):
+    # 如果trimmed 目录存在则清除
+    cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
     # 获取视频文件列表
+    video_folder = os.path.join(video_folder, "trimmed")
     video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
 
     base_folder = os.path.join(
@@ -124,7 +128,8 @@ def export_sing_a_song_video(video_folder):
         if idx == 1:
             seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,bold=True),
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                                      bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=0.2))
             script.add_segment(seg, f"text-index-{idx}")
@@ -135,7 +140,8 @@ def export_sing_a_song_video(video_folder):
         elif idx == 2:
             seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,bold=True),
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                                      bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=0.2))
             script.add_segment(seg, f"text-index-{idx}")
@@ -147,7 +153,8 @@ def export_sing_a_song_video(video_folder):
         elif idx == 3:
             seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,bold=True),
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                                      bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=-0.2))
             script.add_segment(seg, f"text-index-{idx}")
@@ -159,7 +166,8 @@ def export_sing_a_song_video(video_folder):
         elif idx == 4:
             seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,bold=True),
+                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                                      bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
             script.add_segment(seg, f"text-index-{idx}")

@@ -6,7 +6,6 @@ from moviepy import concatenate_videoclips, VideoFileClip
 from guess_who_is_sing import export_who_is_singing_video
 from sing_a_song import export_sing_a_song_video
 from step_by_step_music import export_step_by_step_music_video
-from which_animal_is_cutest import export_which_animal_is_cutest_video
 
 
 def concatenate_videos(video_paths, output_path):
@@ -56,8 +55,9 @@ if __name__ == "__main__":
         # # 新增：拼接两个视频
         # output_final_video = os.path.join(root_dir, "output", f"你猜对了吗_{now_date}.mp4")
         # concatenate_videos([video_1, video_2], output_final_video)
-    video_folder = os.path.join(root_dir, "assets", "22", "trimmed")
-    export_sing_a_song_video(video_folder)
+    for i in range(23, 24):
+
+        export_sing_a_song_video(video_folder)
 
     # video_folder = os.path.join(root_dir, "assets", "19")  # 视频文件夹路径
     # export_who_is_singing_video(video_folder,values = [1.0, 0.0, 0.0, 0.0])
