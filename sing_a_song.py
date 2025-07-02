@@ -68,7 +68,7 @@ def export_sing_a_song_video(video_folder):
     # 获取视频文件列表
     # video_folder = os.path.join(video_folder, "trimmed")
     video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
-
+    random.shuffle(video_files)
     base_folder = os.path.join(
         os.getenv("LOCALAPPDATA"),
         "JianyingPro\\User Data\\Projects\\com.lveditor.draft"

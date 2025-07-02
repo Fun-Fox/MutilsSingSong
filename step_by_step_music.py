@@ -19,7 +19,7 @@ def export_step_by_step_music_video(video_folder):
 
     # 获取 video_folder 路径下的所有 .mp4 视频文件
     video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
-
+    random.shuffle(video_files)
     # 检查是否存在至少一个视频文件
     if video_files:
         # 取第一个视频文件作为 first_video_path

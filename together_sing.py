@@ -32,6 +32,7 @@ def export_together_sing_video(video_folder):
 
     # Step 2: 获取视频文件列表
     video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")][:4]
+    random.shuffle(video_files)
     num_videos = len(video_files)
 
     # Step 3: 创建 audio 文件夹

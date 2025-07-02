@@ -38,7 +38,7 @@ def export_which_is_cutest_video(video_folder):
     cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
 
     video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")]
-
+    random.shuffle(video_files)
     # 创建剪映草稿
     base_folder = os.path.join(
         # LOCALAPPDATA 是 Windows 系统中的一个环境变量，表示当前用户的本地应用程序数据存储路径
