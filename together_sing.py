@@ -137,7 +137,7 @@ def export_together_sing_video(video_folder, values=[0.0, 0.0, 0.0, 0.0]):
             audio_material = draft.Audio_material(audio_info["file_path"])
             audio_segment = draft.Audio_segment(
                 audio_material,
-                draft.Timerange(audio_info["start_time"], audio_info["duration"])
+                draft.Timerange(audio_info["start_time"],  audio_material.duration)
             )
             script.add_track(
                 draft.Track_type.audio,

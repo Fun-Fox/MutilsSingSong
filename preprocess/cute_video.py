@@ -30,9 +30,10 @@ def cute_video(video_dir,output_dir,is_min=False):
             print(f"⚠️ 跳过无效视频 {path}: {e}")
 
     final_duration = sum(durations) / len(durations)
-    print(f"⏱️ 平均视频时长: {final_duration:.2f} 秒")
+
     if is_min:
         final_duration = min(durations)
+    print(f"⏱️ 视频时长: {final_duration:.2f} 秒")
     # print(f"⏱️ 最短视频时长: {shortest_duration:.2f} 秒")
 
 
