@@ -72,14 +72,13 @@ def export_together_sing_video(video_folder):
 
     # Step 5: 随机选择每个段来自哪个视频
     selected_segments = []
-    used_combinations = set()
+    used_video_indices = set()
 
     for seg_idx in range(4):  # 共4段
         while True:
             video_idx = random.randint(0, num_videos - 1)
-            key = f"{video_idx}-{seg_idx}"
-            if key not in used_combinations:
-                used_combinations.add(key)
+            if video_idx not in used_video_indices:
+                used_video_indices.add(video_idx)
                 selected_segments.append(all_segments[video_idx][seg_idx])
                 break
 
@@ -102,13 +101,23 @@ def export_together_sing_video(video_folder):
     script = draft.Script_file(1080, 1920)
 
     # 添加标题文本
-    text_segment = draft.Text_segment(
+    text_segment_1 = draft.Text_segment(
         "Who is singing?",
         trange("0s", "10s"),
         font=Font_type.新青年体,
         style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
+
+    # 添加标题文本
+    text_segment_2 = draft.Text_segment(
+        "One song, four singers — who fits where?",
+        trange("0s", "10s"),
+        font=Font_type.新青年体,
+        style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+        clip_settings=Clip_settings(transform_y=0)
+    )
+    script.add_track(draft.Track_type.text, track_name="text-title", relative_index=100)
 
     effect_ids = [
         "7351319129124506930",
@@ -120,9 +129,11 @@ def export_together_sing_video(video_folder):
         "7404300897628540211"
     ]
     selected_effect = random.choice(effect_ids)
-    text_segment.add_effect(selected_effect)
-    script.add_track(draft.Track_type.text, track_name="text-title", relative_index=100)
-    script.add_segment(text_segment, "text-title")
+    text_segment_1.add_effect(selected_effect)
+    script.add_segment(text_segment_1, "text-title")
+    selected_effect = random.choice(effect_ids)
+    text_segment_2.add_effect(selected_effect)
+    script.add_segment(text_segment_2, "text-title")
 
     # Step 8: 添加音频轨道（完整拼接的音频）
     final_audio_material = draft.Audio_material(final_audio_path)
