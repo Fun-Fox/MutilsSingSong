@@ -23,7 +23,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
                                                                     transform_x=transform_x,
                                                                     transform_y=transform_y))  # 与素材等长
     # 添加到轨道
-    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-100, size=0.8, rect_width=0.8, round_corner=45)
+    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
 
     script.add_segment(video_segment, f'{track_name}', )
 
@@ -71,8 +71,10 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
 
     text_segment.add_effect(selected_effect)
     script.add_segment(text_segment, "text-title")
+    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳, Text_loop_anim.流光,
+            Text_loop_anim.文字泛光, Text_loop_anim.彩色切换]
 
-
+    anim_type = random.choice(anim)
     for idx, video_file in enumerate(video_files):
         script.add_track(draft.Track_type.text, track_name=f'text-index-{idx}', relative_index=idx * 2 + 99)
         video_path = os.path.join(video_folder, "trimmed", video_file)
@@ -95,7 +97,8 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=0.2))
-            seg.add_animation(Text_loop_anim.心跳)
+            seg.add_animation(anim_type)
+
             script.add_segment(seg, f"text-index-{idx}")
 
         elif idx == 1:
@@ -109,7 +112,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=0.2, transform_y=0.2))
-            seg.add_animation(Text_loop_anim.心跳)
+            seg.add_animation(anim_type)
 
             script.add_segment(seg, f"text-index-{idx}")
 
@@ -125,7 +128,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=-0.2))
-            seg.add_animation(Text_loop_anim.心跳)
+            seg.add_animation(anim_type)
 
             script.add_segment(seg, f"text-index-{idx}")
 
@@ -140,7 +143,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
-            seg.add_animation(Text_loop_anim.心跳)
+            seg.add_animation(anim_type)
 
             script.add_segment(seg, f"text-index-{idx}")
     script.dump(DUMP_PATH)

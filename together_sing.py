@@ -9,7 +9,7 @@ from pydub import AudioSegment
 import pyJianYingDraft.pyJianYingDraft as draft
 from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
-    Export_framerate
+    Export_framerate, Text_loop_anim
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,6 +26,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
     script.add_segment(video_segment, track_name)
     return start_time + video_material.duration, script
 
+
 def add_image(script, start_time, end_time, image_path, track_name, relative_index, transform_x, transform_y):
     """添加图片到剪映轨道"""
     script.add_track(draft.Track_type.video, track_name=track_name, relative_index=relative_index)
@@ -39,6 +40,7 @@ def add_image(script, start_time, end_time, image_path, track_name, relative_ind
     script.add_segment(video_segment, track_name)
     print(f"🖼️ 图片添加到轨道: {track_name}")
     return end_time
+
 
 def extract_video_frames(video_path):
     """提取视频的第一帧和最后一帧作为图片"""
@@ -60,6 +62,7 @@ def extract_video_frames(video_path):
     cv2.imwrite(last_frame_path, last_frame)
 
     return first_frame_path, last_frame_path
+
 
 def export_together_sing_video(video_folder):
     # Step 1: 预处理视频（裁剪）
@@ -181,6 +184,9 @@ def export_together_sing_video(video_folder):
 
     # Step 9: 添加视频轨道（仅画面）
     cumulative_time = 0
+    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳, Text_loop_anim.流光,
+            Text_loop_anim.文字泛光, Text_loop_anim.彩色切换]
+    anim_type = random.choice(anim)
     for idx, video_file in enumerate(video_files):
         video_path = os.path.join(video_folder, "trimmed", video_file)
         clip = VideoFileClip(video_path)
@@ -220,10 +226,12 @@ def export_together_sing_video(video_folder):
                 transform_y=-0.2 if idx >= 2 else 0.2
             )
         )
+
+        seg.add_animation(anim_type,duration=250000)
         script.add_segment(seg, f"text-index-{idx}")
 
         # 添加最后一帧图片，持续时间 20s (20_000_000 微秒)
-        image_start_time =  video_material.duration
+        image_start_time = video_material.duration
         image_end_time = image_start_time + 20_000_000  # 20秒
         add_image(
             script,

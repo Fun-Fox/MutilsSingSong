@@ -6,7 +6,7 @@ import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
 from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
-    Text_style
+    Text_style, Text_loop_anim
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -113,7 +113,9 @@ def export_sing_a_song_video(video_folder):
     start_time = 0
     # 增加封面轨道
     script.add_track(draft.Track_type.video, track_name=f'封面', relative_index=0)
-
+    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳, Text_loop_anim.流光,
+            Text_loop_anim.文字泛光, Text_loop_anim.彩色切换]
+    anim_type = random.choices(anim)
     for idx, video_file in enumerate(video_files, start=1):
         full_video_path = os.path.join(video_folder, video_file)
         first_frame, last_frame = extract_video_frames(full_video_path)
@@ -131,6 +133,7 @@ def export_sing_a_song_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=0.2))
+            seg.add_animation(anim_type)
             script.add_segment(seg, f"text-index-{idx}")
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
                                             -0.5, 0.5)
@@ -143,6 +146,7 @@ def export_sing_a_song_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=0.2))
+            seg.add_animation(anim_type)
             script.add_segment(seg, f"text-index-{idx}")
             add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, 0.5)
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
@@ -156,6 +160,7 @@ def export_sing_a_song_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=-0.2))
+            seg.add_animation(anim_type)
             script.add_segment(seg, f"text-index-{idx}")
             add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, -0.5, -0.5)
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
@@ -169,6 +174,7 @@ def export_sing_a_song_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
+            seg.add_animation(anim_type)
             script.add_segment(seg, f"text-index-{idx}")
             add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, -0.5)
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,

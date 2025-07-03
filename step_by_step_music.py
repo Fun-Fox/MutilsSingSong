@@ -177,6 +177,9 @@ def export_step_by_step_music_video(video_folder):
         "🥰", "😍", "🤩", "🥳", "🤗", "😋", "😌", "😏", "😎", "🤓",
         "👶", "😂", "🤣", "😅", "😆", "😈", "😺", "😸", "😻", "😽"
     ]
+    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳,Text_loop_anim.流光,Text_loop_anim.文字泛光,Text_loop_anim.彩色切换]
+    anim_type = random.choice(anim)
+
     for idx, video_file in enumerate(video_files):
         video_path = os.path.join(video_folder, video_file)
         print(f"\n🎬 正在处理视频：{video_file}")
@@ -191,7 +194,6 @@ def export_step_by_step_music_video(video_folder):
         start_time = 0
 
         random_emoji = random.choice(emoji)
-
         if idx == 0:
             seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
@@ -225,7 +227,7 @@ def export_step_by_step_music_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
-        seg.add_animation(Text_loop_anim.彩色火焰)
+        seg.add_animation(anim_type,duration=250000)
         script.add_segment(seg, f"text-index-{idx}")
 
         # 裁剪的节点片段
