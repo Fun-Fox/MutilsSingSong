@@ -109,6 +109,7 @@ def export_sing_a_song_video(video_folder):
     text_segment_1.add_effect(selected_effect)
     selected_effect = random.choice(effect_ids)
     text_segment_2.add_effect(selected_effect)
+    text_segment_2.add_animation(anim_type, duration=250000)
     script.add_segment(text_segment_1, "text-title")
     script.add_segment(text_segment_2, "text-title")
 
@@ -117,7 +118,7 @@ def export_sing_a_song_video(video_folder):
     # 增加封面轨道
     script.add_track(draft.Track_type.video, track_name=f'封面', relative_index=0)
 
-    anim_type = random.choices(anim)
+    anim_type = random.choice(anim)
     for idx, video_file in enumerate(video_files, start=1):
         full_video_path = os.path.join(video_folder, video_file)
         first_frame, last_frame = extract_video_frames(full_video_path)
