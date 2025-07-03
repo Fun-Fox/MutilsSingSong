@@ -1,9 +1,11 @@
 import datetime
 import os
+import random
 
 from moviepy import concatenate_videoclips, VideoFileClip
 
 from guess_who_is_sing import export_who_is_singing_video
+from preprocess.cute_video import cute_video
 from sing_a_song import export_sing_a_song_video
 from step_by_step_music import export_step_by_step_music_video
 from together_sing import export_together_sing_video
@@ -34,43 +36,21 @@ def concatenate_videos(video_paths, output_path):
 if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # for i in ['love the way you lie', "105-1", "105-2", "zdht", "bbg", "dqsj", "dqsj-1"]:
-    #     video_folder = os.path.join(root_dir, "assets", i)  # 视频文件夹路径
-    #     export_video(video_folder)
-
-    # video_folder = os.path.join(root_dir, "assets", "yourman")  # 视频文件夹路径
-    # export_video(video_folder)
-
-    # video_folder = os.path.join(root_dir, "assets", "cydd-1")  # 视频文件夹路径
-    # export_video(video_folder)
-    #
-    # for i in range(23,24):
-    #     video_folder = os.path.join(root_dir, "assets", str(i))  # 视频文件夹路径
-    #     # video_1 = export_who_is_singing_video(video_folder, values=[1.0, 0.0, 0.0, 0.0])
-    #     video_1 = export_who_is_singing_video(video_folder, values=[0.0, 1.0, 0.0, 0.0])
-    #     video_1 = export_who_is_singing_video(video_folder, values=[0.0, 0.0, 1.0, 0.0])
-    #     video_1 = export_who_is_singing_video(video_folder, values=[0.0, 0.0, 0.0, 1.0])
-        # video_folder = os.path.join(root_dir, "assets", str(i), "trimmed")
-        # video_2 = export_step_by_step_music_video(video_folder)
-        # now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        # # 新增：拼接两个视频
-        # output_final_video = os.path.join(root_dir, "output", f"你猜对了吗_{now_date}.mp4")
-        # concatenate_videos([video_1, video_2], output_final_video)
-    for i in range(1, 22):
+    for i in range(22, 29):
+        print(f"处理第{i}集")
         video_folder = os.path.join(root_dir, "assets", str(i))
-        # export_sing_a_song_video(video_folder)
+        cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
+        values = [0.0, 1.0, 0.0, 0.0]
+        random.shuffle(values)
+        # 竞猜-谁在唱歌
+        export_who_is_singing_video(video_folder, values=values)
+        # 逐句唱歌-无声音的画面暂停
+        export_step_by_step_music_video(video_folder)
+        # 同句唱-擂台赛
+        export_sing_a_song_video(video_folder)
+        # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
         export_together_sing_video(video_folder)
 
-    # video_folder = os.path.join(root_dir, "assets", "19")  # 视频文件夹路径
-    # export_who_is_singing_video(video_folder,values = [1.0, 0.0, 0.0, 0.0])
-    # export_who_is_singing_video(video_folder,values = [0.0, 1.0, 0.0, 0.0])
-    # # export_who_is_singing_video(video_folder,values = [0.0, 0.0, 1.0, 0.0])
-    # export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0])
-
-
     # video_folder = os.path.join(root_dir, "assets", "4")  # 视频文件夹路径
-    #
+    # 选择可爱的猫咪
     # export_which_animal_is_cutest_video(video_folder)
-
-    # video_folder = os.path.join(root_dir, "assets", "yellow")  # 视频文件夹路径
-    # export_video(video_folder)

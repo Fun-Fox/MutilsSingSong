@@ -64,7 +64,6 @@ def add_video_material(script, track_name, relative_index, video_path, start_tim
 
 def export_sing_a_song_video(video_folder):
     # 如果trimmed 目录存在则清除
-    # cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
     # 获取视频文件列表
     # video_folder = os.path.join(video_folder, "trimmed")
     video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]

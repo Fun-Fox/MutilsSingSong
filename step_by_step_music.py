@@ -9,7 +9,7 @@ import tempfile
 import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
-    Text_style
+    Text_style, Text_loop_anim
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -105,7 +105,7 @@ def export_step_by_step_music_video(video_folder):
     script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
 
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
-    text = "Did you guess correctly?"
+    text = "Can You Keep Up with the Lyrics?"
     # "Which cover is best?"
     text_segment = draft.Text_segment(text, trange("0s", "10s"),
                                       font=Font_type.新青年体,
@@ -171,6 +171,12 @@ def export_step_by_step_music_video(video_folder):
         # 添加到轨道
         script.add_segment(video_segment, f'{idx}-{output_path_end}-image', )
 
+    #  增加emoji
+    emoji = [
+        "😊", "😄", "😃", "😁", "😆", "😅", "😂", "🤣", "☺️", "😇",
+        "🥰", "😍", "🤩", "🥳", "🤗", "😋", "😌", "😏", "😎", "🤓",
+        "👶", "😂", "🤣", "😅", "😆", "😈", "😺", "😸", "😻", "😽"
+    ]
     for idx, video_file in enumerate(video_files):
         video_path = os.path.join(video_folder, video_file)
         print(f"\n🎬 正在处理视频：{video_file}")
@@ -184,43 +190,43 @@ def export_step_by_step_music_video(video_folder):
 
         start_time = 0
 
+        random_emoji = random.choice(emoji)
+
         if idx == 0:
-            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                     style=Text_style(size=12, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=0.2))
-            script.add_segment(seg, f"text-index-{idx}")
 
         elif idx == 1:
 
-            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                     style=Text_style(size=12, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2, transform_y=0.2))
-            script.add_segment(seg, f"text-index-{idx}")
 
         elif idx == 2:
 
-            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+                                     style=Text_style(size=12, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=-0.2))
-            script.add_segment(seg, f"text-index-{idx}")
 
-        elif idx == 3:
+        else:
 
-            seg = draft.Text_segment(f"{idx + 1}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
-            script.add_segment(seg, f"text-index-{idx}")
+        seg.add_animation(Text_loop_anim.彩色火焰)
+        script.add_segment(seg, f"text-index-{idx}")
 
         # 裁剪的节点片段
         for i, (start, end) in enumerate(segments):

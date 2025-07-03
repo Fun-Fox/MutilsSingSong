@@ -63,7 +63,6 @@ def extract_video_frames(video_path):
 
 def export_together_sing_video(video_folder):
     # Step 1: 预处理视频（裁剪）
-    cute_video(video_folder, os.path.join(video_folder, 'trimmed'))
 
     # Step 2: 获取视频文件列表
     video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")][:4]

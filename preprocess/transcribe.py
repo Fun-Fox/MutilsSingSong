@@ -372,8 +372,8 @@ def main(video_dir):
     print(f"✅ 已生成SRT文件: {srt_files}")
 
     # 3. 查找共同歌词片段（至少4个文件中出现，7段连续）
-    common_segments, file_lyrics = find_common_segments(srt_files, min_files=4, min_segment_length=4,
-                                                        max_segment_length=40, similarity_threshold=0.6)
+    common_segments, file_lyrics = find_common_segments(srt_files, min_files=4, min_segment_length=7,
+                                                        max_segment_length=40, similarity_threshold=0.4)
     print(f"✅ 共同歌词片段：{common_segments}")
     if not common_segments:
         print("⚠️ 未找到符合条件的歌词片段")
@@ -381,7 +381,7 @@ def main(video_dir):
 
     # 4. 裁剪视频
     output_dir = os.path.join(root_dir, "output", "cropped")
-    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.6)
+    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.4)
 
 
 if __name__ == '__main__':

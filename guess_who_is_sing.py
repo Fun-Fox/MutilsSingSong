@@ -34,8 +34,6 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
 def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
     # 获取 video_folder 路径下的所有 .mp4 视频文件
 
-    cute_video(video_folder, os.path.join(video_folder, 'trimmed'),is_min=True)
-
     video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")]
     random.shuffle(video_files)
     # 创建剪映草稿
