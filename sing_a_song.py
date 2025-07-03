@@ -95,7 +95,7 @@ def export_sing_a_song_video(video_folder):
         style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
-    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光,]
+    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.心跳]
     anim_type=random.choice(anim)
     text_segment_1.add_animation(anim_type,duration= 250000)
 

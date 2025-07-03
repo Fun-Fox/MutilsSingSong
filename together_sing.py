@@ -137,7 +137,7 @@ def export_together_sing_video(video_folder):
     DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
     script = draft.Script_file(1080, 1920)
-    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.流光]
+    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.心跳]
     # 添加标题文本
     text_segment_1 = draft.Text_segment(
         "What’s the singing order?",

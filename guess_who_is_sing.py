@@ -55,7 +55,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                       font=Font_type.新青年体,
                                       style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
-    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳,]
+    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.心跳]
     anim_type=random.choice(anim)
     text_segment.add_animation(anim_type,duration= 250000)
     effect_ids = [
