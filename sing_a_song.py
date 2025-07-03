@@ -109,7 +109,7 @@ def export_sing_a_song_video(video_folder):
     text_segment_1.add_effect(selected_effect)
     selected_effect = random.choice(effect_ids)
     text_segment_2.add_effect(selected_effect)
-    text_segment_2.add_animation(anim_type, duration=250000)
+    text_segment_2.add_animation(anim_type, "2.5s")
     script.add_segment(text_segment_1, "text-title")
     script.add_segment(text_segment_2, "text-title")
 

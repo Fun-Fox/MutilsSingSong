@@ -147,7 +147,7 @@ def export_together_sing_video(video_folder):
         clip_settings=Clip_settings(transform_y=0)
     )
     anim_type=random.choice(anim)
-    text_segment_1.add_animation(anim_type, duration=250000)
+    text_segment_1.add_animation(anim_type, "2.5s")
 
     # # 添加标题文本
     # text_segment_2 = draft.Text_segment(
@@ -228,7 +228,7 @@ def export_together_sing_video(video_folder):
             )
         )
 
-        seg.add_animation(anim_type, duration=250000)
+        seg.add_animation(anim_type, "2.5s")
         script.add_segment(seg, f"text-index-{idx}")
 
         # 添加最后一帧图片，持续时间 20s (20_000_000 微秒)

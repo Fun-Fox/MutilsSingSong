@@ -57,7 +57,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                       clip_settings=Clip_settings(transform_y=0))
     anim= [Text_loop_anim.彩色火焰, Text_loop_anim.心跳]
     anim_type=random.choice(anim)
-    text_segment.add_animation(anim_type,duration= 250000)
+    text_segment.add_animation(anim_type,"2.5s")
     effect_ids = [
         "7351319129124506930",
         "7506817303296675123",
@@ -96,7 +96,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=0.2))
-            seg.add_animation(anim_type,duration= 250000)
+            seg.add_animation(anim_type,"2.5s")
 
             script.add_segment(seg, f"text-index-{idx}")
 
@@ -111,7 +111,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=0.2, transform_y=0.2))
-            seg.add_animation(anim_type,duration= 250000)
+            seg.add_animation(anim_type,"2.5s")
 
             script.add_segment(seg, f"text-index-{idx}")
 
@@ -127,7 +127,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=-0.2))
-            seg.add_animation(anim_type,duration= 250000)
+            seg.add_animation(anim_type,"2.5s")
 
             script.add_segment(seg, f"text-index-{idx}")
 
@@ -142,7 +142,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
-            seg.add_animation(anim_type,duration= 250000)
+            seg.add_animation(anim_type,"2.5s")
 
             script.add_segment(seg, f"text-index-{idx}")
     script.dump(DUMP_PATH)

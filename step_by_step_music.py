@@ -118,7 +118,7 @@ def export_step_by_step_music_video(video_folder):
     ]
     anim= [Text_loop_anim.彩色火焰, Text_loop_anim.心跳, ]
     anim_type=random.choice(anim)
-    text_segment.add_animation(anim_type, duration=250000)
+    text_segment.add_animation(anim_type, "2.5s")
     effect_ids = [
         "7351319129124506930",
         "7506817303296675123",
@@ -230,7 +230,7 @@ def export_step_by_step_music_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
-        seg.add_animation(anim_type,duration=250000)
+        seg.add_animation(anim_type,"2.5s")
         script.add_segment(seg, f"text-index-{idx}")
 
         # 裁剪的节点片段
