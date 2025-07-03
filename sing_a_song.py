@@ -95,9 +95,9 @@ def export_sing_a_song_video(video_folder):
         style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
-    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳,Text_loop_anim.流光,Text_loop_anim.文字泛光,Text_loop_anim.彩色切换]
+    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光,]
     anim_type=random.choice(anim)
-    text_segment_1.add_animation(anim_type)
+    text_segment_1.add_animation(anim_type,duration= 250000)
 
     text_segment_2 = draft.Text_segment(
         text2,
@@ -135,7 +135,7 @@ def export_sing_a_song_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=0.2))
-            seg.add_animation(anim_type)
+            seg.add_animation(anim_type,duration= 250000)
             script.add_segment(seg, f"text-index-{idx}")
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
                                             -0.5, 0.5)
@@ -148,7 +148,7 @@ def export_sing_a_song_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=0.2))
-            seg.add_animation(anim_type)
+            seg.add_animation(anim_type,duration= 250000)
             script.add_segment(seg, f"text-index-{idx}")
             add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, 0.5)
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
@@ -162,7 +162,7 @@ def export_sing_a_song_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=-0.2,
                                                                  transform_y=-0.2))
-            seg.add_animation(anim_type)
+            seg.add_animation(anim_type,duration= 250000)
             script.add_segment(seg, f"text-index-{idx}")
             add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, -0.5, -0.5)
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
@@ -176,7 +176,7 @@ def export_sing_a_song_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
-            seg.add_animation(anim_type)
+            seg.add_animation(anim_type,duration= 250000)
             script.add_segment(seg, f"text-index-{idx}")
             add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, -0.5)
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,

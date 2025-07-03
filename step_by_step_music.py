@@ -105,7 +105,7 @@ def export_step_by_step_music_video(video_folder):
     script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
 
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
-    text = "Can You Keep Up with the Lyrics?"
+    text = "Sing Along! 🎤"
     # "Which cover is best?"
     text_segment = draft.Text_segment(text, trange("0s", "10s"),
                                       font=Font_type.新青年体,
@@ -116,7 +116,7 @@ def export_step_by_step_music_video(video_folder):
         "🥰", "😍", "🤩", "🥳", "🤗", "😋", "😌", "😏", "😎", "🤓",
         "👶", "😂", "🤣", "😅", "😆", "😈", "😺", "😸", "😻", "😽"
     ]
-    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳,Text_loop_anim.流光,Text_loop_anim.文字泛光,Text_loop_anim.彩色切换]
+    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, ]
     anim_type=random.choice(anim)
     text_segment.add_animation(anim_type, duration=250000)
     effect_ids = [
