@@ -2,6 +2,7 @@ import datetime
 import os
 import random
 
+import cv2
 from moviepy import VideoFileClip, concatenate_audioclips, AudioFileClip
 from pydub import AudioSegment
 
@@ -25,6 +26,40 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
     script.add_segment(video_segment, track_name)
     return start_time + video_material.duration, script
 
+def add_image(script, start_time, end_time, image_path, track_name, relative_index, transform_x, transform_y):
+    """添加图片到剪映轨道"""
+    script.add_track(draft.Track_type.video, track_name=track_name, relative_index=relative_index)
+    video_material = draft.Video_material(image_path)
+    video_segment = draft.Video_segment(
+        video_material,
+        target_timerange=draft.Timerange(start_time, end_time),
+        source_timerange=draft.Timerange(0, video_material.duration),
+        clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=transform_x, transform_y=transform_y)
+    )
+    script.add_segment(video_segment, track_name)
+    print(f"🖼️ 图片添加到轨道: {track_name}")
+    return end_time
+
+def extract_video_frames(video_path):
+    """提取视频的第一帧和最后一帧作为图片"""
+    cap = cv2.VideoCapture(video_path)
+    success, frame = cap.read()
+    if not success:
+        raise ValueError(f"无法读取视频 {video_path}")
+
+    first_frame_path = os.path.splitext(video_path)[0] + "_first.jpg"
+    cv2.imwrite(first_frame_path, frame)
+
+    last_frame = None
+    while success:
+        last_frame = frame
+        success, frame = cap.read()
+    cap.release()
+
+    last_frame_path = os.path.splitext(video_path)[0] + "_last.jpg"
+    cv2.imwrite(last_frame_path, last_frame)
+
+    return first_frame_path, last_frame_path
 
 def export_together_sing_video(video_folder):
     # Step 1: 预处理视频（裁剪）
@@ -152,6 +187,10 @@ def export_together_sing_video(video_folder):
         clip = VideoFileClip(video_path)
         duration_us = int(clip.duration * 1_000_000)
 
+        if idx == 0:
+            first_video_duration = clip.duration  # 保存第一个视频的时长（秒）
+            # 提取最后一帧
+        _, last_frame_path = extract_video_frames(video_path)
         # 添加视频轨道
         track_name = f'{idx}-{video_file}-video'
         script.add_track(draft.Track_type.video, track_name=track_name, relative_index=idx * 2 + 10)
@@ -184,6 +223,20 @@ def export_together_sing_video(video_folder):
         )
         script.add_segment(seg, f"text-index-{idx}")
 
+        # 添加最后一帧图片，持续时间 20s (20_000_000 微秒)
+        image_start_time =  video_material.duration
+        image_end_time = image_start_time + 20_000_000  # 20秒
+        add_image(
+            script,
+            image_start_time,
+            image_end_time,
+            last_frame_path,
+            f"{idx}-last-frame",
+            (idx + 5) * 2,
+            transform_x={0: -0.5, 1: 0.5, 2: -0.5, 3: 0.5}.get(idx, 0),
+            transform_y={0: 0.5, 1: 0.5, 2: -0.5, 3: -0.5}.get(idx, 0)
+        )
+
         cumulative_time += duration_us
 
     # Step 10: 保存脚本并导出视频
@@ -204,4 +257,11 @@ def export_together_sing_video(video_folder):
     )
     print(f"导出视频完成: {output_path}")
 
-    return output_path
+    # 裁剪视频为第一个视频的长度
+    output_video = VideoFileClip(output_path)
+    clipped_video = output_video.subclipped(0, first_video_duration)  # 使用第一个视频的时长裁剪
+    clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mp4")
+    clipped_video.write_videofile(clipped_output_path, codec="libx264", audio_codec="aac")
+    print(f"✅ 视频已裁剪并保存至: {clipped_output_path}")
+
+    return clipped_output_path

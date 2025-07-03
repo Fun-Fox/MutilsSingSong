@@ -56,7 +56,7 @@ if __name__ == "__main__":
         # # 新增：拼接两个视频
         # output_final_video = os.path.join(root_dir, "output", f"你猜对了吗_{now_date}.mp4")
         # concatenate_videos([video_1, video_2], output_final_video)
-    for i in range(1, 23):
+    for i in range(1, 22):
         video_folder = os.path.join(root_dir, "assets", str(i))
         # export_sing_a_song_video(video_folder)
         export_together_sing_video(video_folder)
