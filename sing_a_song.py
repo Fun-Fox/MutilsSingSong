@@ -95,6 +95,9 @@ def export_sing_a_song_video(video_folder):
         style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
+    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳,Text_loop_anim.流光,Text_loop_anim.文字泛光,Text_loop_anim.彩色切换]
+    anim_type=random.choice(anim)
+    text_segment_1.add_animation(anim_type)
 
     text_segment_2 = draft.Text_segment(
         text2,
@@ -113,8 +116,7 @@ def export_sing_a_song_video(video_folder):
     start_time = 0
     # 增加封面轨道
     script.add_track(draft.Track_type.video, track_name=f'封面', relative_index=0)
-    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳, Text_loop_anim.流光,
-            Text_loop_anim.文字泛光, Text_loop_anim.彩色切换]
+
     anim_type = random.choices(anim)
     for idx, video_file in enumerate(video_files, start=1):
         full_video_path = os.path.join(video_folder, video_file)

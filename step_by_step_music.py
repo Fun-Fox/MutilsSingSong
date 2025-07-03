@@ -111,6 +111,14 @@ def export_step_by_step_music_video(video_folder):
                                       font=Font_type.新青年体,
                                       style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
+    emoji = [
+        "😊", "😄", "😃", "😁", "😆", "😅", "😂", "🤣", "☺️", "😇",
+        "🥰", "😍", "🤩", "🥳", "🤗", "😋", "😌", "😏", "😎", "🤓",
+        "👶", "😂", "🤣", "😅", "😆", "😈", "😺", "😸", "😻", "😽"
+    ]
+    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳,Text_loop_anim.流光,Text_loop_anim.文字泛光,Text_loop_anim.彩色切换]
+    anim_type=random.choice(anim)
+    text_segment.add_animation(anim_type, duration=250000)
     effect_ids = [
         "7351319129124506930",
         "7506817303296675123",
@@ -172,12 +180,7 @@ def export_step_by_step_music_video(video_folder):
         script.add_segment(video_segment, f'{idx}-{output_path_end}-image', )
 
     #  增加emoji
-    emoji = [
-        "😊", "😄", "😃", "😁", "😆", "😅", "😂", "🤣", "☺️", "😇",
-        "🥰", "😍", "🤩", "🥳", "🤗", "😋", "😌", "😏", "😎", "🤓",
-        "👶", "😂", "🤣", "😅", "😆", "😈", "😺", "😸", "😻", "😽"
-    ]
-    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳,Text_loop_anim.流光,Text_loop_anim.文字泛光,Text_loop_anim.彩色切换]
+
     anim_type = random.choice(anim)
 
     for idx, video_file in enumerate(video_files):

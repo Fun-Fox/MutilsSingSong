@@ -55,7 +55,9 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
                                       font=Font_type.新青年体,
                                       style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
-
+    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳,Text_loop_anim.流光,Text_loop_anim.文字泛光,Text_loop_anim.彩色切换]
+    anim_type=random.choice(anim)
+    text_segment.add_animation(anim_type)
     effect_ids = [
         "7351319129124506930",
         "7506817303296675123",
@@ -71,9 +73,6 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
 
     text_segment.add_effect(selected_effect)
     script.add_segment(text_segment, "text-title")
-    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳, Text_loop_anim.流光,
-            Text_loop_anim.文字泛光, Text_loop_anim.彩色切换]
-
     anim_type = random.choice(anim)
     for idx, video_file in enumerate(video_files):
         script.add_track(draft.Track_type.text, track_name=f'text-index-{idx}', relative_index=idx * 2 + 99)

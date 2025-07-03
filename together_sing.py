@@ -137,7 +137,8 @@ def export_together_sing_video(video_folder):
     DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
     script = draft.Script_file(1080, 1920)
-
+    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳, Text_loop_anim.流光,
+            Text_loop_anim.文字泛光, Text_loop_anim.彩色切换]
     # 添加标题文本
     text_segment_1 = draft.Text_segment(
         "What’s the singing order?",
@@ -146,6 +147,8 @@ def export_together_sing_video(video_folder):
         style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
+    anim_type=random.choice(anim)
+    text_segment_1.add_animation(anim_type, duration=250000)
 
     # # 添加标题文本
     # text_segment_2 = draft.Text_segment(
@@ -184,8 +187,7 @@ def export_together_sing_video(video_folder):
 
     # Step 9: 添加视频轨道（仅画面）
     cumulative_time = 0
-    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.流光, Text_loop_anim.心跳, Text_loop_anim.流光,
-            Text_loop_anim.文字泛光, Text_loop_anim.彩色切换]
+
     anim_type = random.choice(anim)
     for idx, video_file in enumerate(video_files):
         video_path = os.path.join(video_folder, "trimmed", video_file)
@@ -227,7 +229,7 @@ def export_together_sing_video(video_folder):
             )
         )
 
-        seg.add_animation(anim_type,duration=250000)
+        seg.add_animation(anim_type, duration=250000)
         script.add_segment(seg, f"text-index-{idx}")
 
         # 添加最后一帧图片，持续时间 20s (20_000_000 微秒)
