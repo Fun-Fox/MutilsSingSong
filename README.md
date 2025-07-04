@@ -12,6 +12,9 @@
 
 ![](/doc/2.png)
 
+
+![](/doc/3.png)
+
 ## 下载模型
 
 ```commandline

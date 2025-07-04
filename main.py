@@ -1,6 +1,7 @@
 import datetime
 import os
 import random
+from typing import Optional
 
 from moviepy import concatenate_videoclips, VideoFileClip
 
@@ -34,8 +35,52 @@ def concatenate_videos(video_paths, output_path):
     print(f"✅ 视频合并完成，输出路径：{output_path}")
 
 
+import os
+from moviepy import VideoFileClip
+
+
+def capture_last_frame(video_path: str, output_image_path: str = None) -> Optional[str]:
+    """
+    截取视频的最后一帧并保存为图片
+
+    Args:
+        video_path (`str`): 视频文件路径
+        output_image_path (`str`, optional): 输出图片路径，若不指定则与视频同名 [.jpg](file://D:\PycharmProjects\MutilsSingSong\assets\1\trimmed_TikDownloader.io_7434069824562629930_hd_last.jpg) 保存在同一目录
+
+    Returns:
+        Optional[str]: 截图保存的路径，失败时返回 `None`
+    """
+    if not os.path.exists(video_path):
+        print(f"❌ 视频文件不存在：{video_path}")
+        return None
+
+    try:
+        with VideoFileClip(video_path) as clip:
+            last_frame = clip.get_frame(clip.duration - 0.1)  # 获取倒数第0.1秒的画面
+
+        from PIL import Image
+        import numpy as np
+
+        # 如果未指定输出路径，则使用视频同名 .jpg
+        if output_image_path is None:
+            output_image_path = os.path.splitext(video_path)[0] + ".jpg"
+
+        # 将 numpy 数组转换为 PIL 图像并保存
+        image = Image.fromarray(last_frame)
+        image.save(output_image_path)
+
+        print(f"✅ 成功保存最后一帧到 {output_image_path}")
+        return output_image_path
+
+    except Exception as e:
+        print(f"❌ 截取最后一帧失败：{e}")
+        return None
+
+
+# 四宫格业务玩法
 if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
+    # *****翻唱歌曲玩法*****
 
     # for i in range(28, 29):
     #     print(f"处理第{i}集")
@@ -67,23 +112,47 @@ if __name__ == "__main__":
     #     except:
     #         print("❌ 竞猜-逐句唱歌的顺序-有声音的画面不暂停失败")
 
-    # video_folder = os.path.join(root_dir, "assets", "4")  # 视频文件夹路径
-    # 选择可爱的猫咪
-    # export_which_animal_is_cutest_video(video_folder)
-    title_options = [
-        "Battle! Choose Your Cat Warrior Camp",
-        "Four Camps! Which Cat Warrior Wins?",
-        "Cat Warriors' Showdown: Pick Your Camp",
-        "Ultimate Battle! Which Cat Clan Rules?",
-        "Camp Clash! Unleash Your Cat Warrior"
-    ]
+    # *****Q版AI动漫卡片*****
 
+    # title_options = [
+    #     "Battle! Choose Your Cat Warrior Camp",
+    #     "Four Camps! Which Cat Warrior Wins?",
+    #     "Cat Warriors' Showdown: Pick Your Camp",
+    #     "Ultimate Battle! Which Cat Clan Rules?",
+    #     "Camp Clash! Unleash Your Cat Warrior"
+    # ]
+    #
+    #
+    #
+    # for i in range(1, 9):
+    #     title = random.choice(title_options)
+    #     print(f"处理第{i}集")
+    #     video_folder = os.path.join(root_dir, "assets", "Q", str(i))
+    #     cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
+    #
+    #     export_which_is_cutest_video(video_folder, title)
+    #
 
+    # *****Q版AI动漫卡片*****
 
-    for i in range(1, 13):
-        title = random.choice(title_options)
-        print(f"处理第{i}集")
-        video_folder = os.path.join(root_dir, "assets", "Q", str(i))
-        cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
+    # title_options = [
+    #     "Mini Heroes Brawl! Pick Your Squad",
+    #     "Q-Style Showdown: Choose Your Camp",
+    #     "Tiny Heroes Battle! Which Team Rules?",
+    #     "Chibi Brawl: Select Your Power Camp",
+    #     "Q-Heroes Clash! Lead Your Faction"
+    # ]
+    #
+    # for i in range(8, 13):
+    #     title = random.choice(title_options)
+    #     print(f"处理第{i}集")
+    #     video_folder = os.path.join(root_dir, "assets", "Q", str(i))
+    #     cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
+    #
+    #     export_which_is_cutest_video(video_folder, title)
 
-        export_which_is_cutest_video(video_folder, title)
+    video_folder = os.path.join(root_dir, "output", "待发布","Q版")
+    video_files = [f for f in os.listdir(os.path.join(video_folder)) if f.endswith(".mp4")]
+    for video_file in video_files:
+        video_path = os.path.join(video_folder, video_file)
+        capture_last_frame(video_path)
