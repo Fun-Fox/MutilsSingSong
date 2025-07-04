@@ -156,7 +156,7 @@ def export_together_sing_video(video_folder):
     # 添加标题文本
     text_segment_1 = draft.Text_segment(
         "What’s the singing order?",
-        trange("0s", video.duration),
+        trange("0s", f"{video.duration/2}s"),
         font=Font_type.新青年体,
         style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)

@@ -50,8 +50,18 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
     script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
     # 带下划线、位置及大小类似字幕的浅蓝色文本
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
+    if video_files:
+        # 取第一个视频文件作为 first_video_path
+        first_video_path = os.path.join(video_folder, video_files[0])
+        print(f"✅ 第一个视频路径为: {first_video_path}")
+    else:
+        raise FileNotFoundError("未找到任何 .mp4 视频文件")
 
-    text_segment = draft.Text_segment("Who is singing?", trange("0s", "10s"),
+        # 加载第一个视频
+    print("📘 正在加载第一个视频...")
+    video = VideoFileClip(first_video_path)
+
+    text_segment = draft.Text_segment("Who is singing?", trange("0s", f"{video.duration}s"),
                                       font=Font_type.新青年体,
                                       style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))

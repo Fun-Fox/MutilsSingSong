@@ -103,7 +103,7 @@ def export_sing_a_song_video(video_folder):
     video = VideoFileClip(first_video_path)
     text_segment_1 = draft.Text_segment(
         text1,
-        trange("0s", video.duration/2),
+        trange("0s", f"{video.duration/2}s"),
         font=Font_type.新青年体,
         style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
@@ -114,7 +114,7 @@ def export_sing_a_song_video(video_folder):
 
     text_segment_2 = draft.Text_segment(
         text2,
-        trange("13s", video.duration/2),
+        trange("13s", f"{video.duration/2}s"),
         font=Font_type.新青年体,
         style=Text_style(size=10.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
