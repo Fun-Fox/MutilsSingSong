@@ -107,6 +107,7 @@ def export_step_by_step_music_video(video_folder):
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
     text = "Sing Along! "
     # "Which cover is best?"
+    print(f"时长：{video.duration}s")
     text_segment = draft.Text_segment(text, trange("0s", f"{video.duration}s"),
                                       font=Font_type.新青年体,
                                       style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
