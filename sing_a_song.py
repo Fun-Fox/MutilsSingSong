@@ -115,7 +115,7 @@ def export_sing_a_song_video(video_folder):
 
     text_segment_2 = draft.Text_segment(
         text2,
-        trange("13s", f"{video.duration/2}s"),
+        trange(f"{video.duration/2}s", f"{video.duration/2}s"),
         font=Font_type.新青年体,
         style=Text_style(size=10.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)

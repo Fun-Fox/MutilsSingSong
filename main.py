@@ -36,20 +36,33 @@ def concatenate_videos(video_paths, output_path):
 if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
 
-    for i in range(22, 29):
+    for i in range(28, 29):
         print(f"处理第{i}集")
         video_folder = os.path.join(root_dir, "assets", str(i))
         cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
         values = [0.0, 1.0, 0.0, 0.0]
         random.shuffle(values)
         # 竞猜-谁在唱歌
-        export_who_is_singing_video(video_folder, values=values)
+        try:
+            export_who_is_singing_video(video_folder, values=values)
+        except:
+            print("❌ 竞猜-谁在唱歌失败")
+
         # 逐句唱歌-无声音的画面暂停
-        export_step_by_step_music_video(video_folder)
+        try:
+            export_step_by_step_music_video(video_folder)
+        except:
+            print("❌ 逐句唱歌-无声音的画面暂停失败")
         # 同句唱-擂台赛
-        export_sing_a_song_video(video_folder)
+        try:
+            export_together_sing_video(video_folder)
+        except:
+            print("❌ 同句唱-擂台赛失败")
         # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
-        export_together_sing_video(video_folder)
+        try:
+            export_together_sing_video(video_folder)
+        except:
+            print("❌ 竞猜-逐句唱歌的顺序-有声音的画面不暂停失败")
 
     # video_folder = os.path.join(root_dir, "assets", "4")  # 视频文件夹路径
     # 选择可爱的猫咪
