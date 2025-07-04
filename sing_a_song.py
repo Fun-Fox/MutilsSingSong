@@ -66,7 +66,7 @@ def add_video_material(script, track_name, relative_index, video_path, start_tim
     return start_time + video_material.duration
 
 
-def export_sing_a_song_video(video_folder):
+def export_sing_a_song_video(video_folder,title_1="The Ultimate Karaoke Battle",title_2="🏆 Battle of the Voices – Who Wins?"):
     # 如果trimmed 目录存在则清除
     # 获取视频文件列表
     # video_folder = os.path.join(video_folder, "trimmed")
@@ -83,8 +83,6 @@ def export_sing_a_song_video(video_folder):
     script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
 
     # 添加标题文本
-    text1 = "The Ultimate Karaoke Battle"
-    text2 = "🏆 Battle of the Voices – Who Wins?"
     script.add_track(draft.Track_type.text, track_name="text-title", relative_index=100)
     effect_ids = [
         "7351319129124506930", "7506817303296675123", "7507075178447359282",
@@ -103,10 +101,10 @@ def export_sing_a_song_video(video_folder):
     print("📘 正在加载第一个视频...")
     video = VideoFileClip(first_video_path)
     text_segment_1 = draft.Text_segment(
-        text1,
+        title_1,
         trange("0s", f"{video.duration/2}s"),
         font=Font_type.新青年体,
-        style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+        style=Text_style(size=12.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
     anim = [Text_loop_anim.彩色火焰, Text_loop_anim.心跳]
@@ -114,7 +112,7 @@ def export_sing_a_song_video(video_folder):
     text_segment_1.add_animation(anim_type, "2.5s")
 
     text_segment_2 = draft.Text_segment(
-        text2,
+        title_2,
         trange(f"{video.duration/2}s", f"{video.duration/2}s"),
         font=Font_type.新青年体,
         style=Text_style(size=10.0, color=(1.0, 1.0, 1.0), underline=False, align=1),

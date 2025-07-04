@@ -14,7 +14,7 @@ from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Ex
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def export_step_by_step_music_video(video_folder):
+def export_step_by_step_music_video(video_folder,title = "Sing Along!"):
     # === 第一步：从第一个视频提取卡点时间点 ===
 
     # 获取 video_folder 路径下的所有 .mp4 视频文件
@@ -105,10 +105,10 @@ def export_step_by_step_music_video(video_folder):
     script = draft.Script_file(1080, 1920)  # 1920x1080分辨率
 
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
-    text = "Sing Along! "
+
     # "Which cover is best?"
     print(f"时长：{video.duration}s")
-    text_segment = draft.Text_segment(text, trange("0s", f"{video.duration}s"),
+    text_segment = draft.Text_segment(title, trange("0s", f"{video.duration}s"),
                                       font=Font_type.新青年体,
                                       style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))

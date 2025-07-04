@@ -31,7 +31,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
     return start_time, script
 
 
-def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
+def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0],title="Who is singing?"):
     # 获取 video_folder 路径下的所有 .mp4 视频文件
 
     video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith(".mp4")]
@@ -61,7 +61,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
     print("📘 正在加载第一个视频...")
     video = VideoFileClip(first_video_path)
 
-    text_segment = draft.Text_segment("Who is singing?", trange("0s", f"{video.duration}s"),
+    text_segment = draft.Text_segment(title, trange("0s", f"{video.duration}s"),
                                       font=Font_type.新青年体,
                                       style=Text_style(size=20.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))

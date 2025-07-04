@@ -69,7 +69,7 @@ def extract_video_frames(video_path):
     return first_frame_path, last_frame_path
 
 
-def export_together_sing_video(video_folder):
+def export_together_sing_video(video_folder,title="What’s the singing order?"):
     # Step 1: 预处理视频（裁剪）
 
     # Step 2: 获取视频文件列表
@@ -155,7 +155,7 @@ def export_together_sing_video(video_folder):
     video = VideoFileClip(first_video_path)
     # 添加标题文本
     text_segment_1 = draft.Text_segment(
-        "What’s the singing order?",
+        title,
         trange("0s", f"{video.duration/2}s"),
         font=Font_type.新青年体,
         style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
