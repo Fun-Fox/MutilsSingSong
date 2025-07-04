@@ -52,7 +52,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0]):
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
     if video_files:
         # 取第一个视频文件作为 first_video_path
-        first_video_path = os.path.join(video_folder, video_files[0])
+        first_video_path = os.path.join(video_folder,  'trimmed',video_files[0])
         print(f"✅ 第一个视频路径为: {first_video_path}")
     else:
         raise FileNotFoundError("未找到任何 .mp4 视频文件")

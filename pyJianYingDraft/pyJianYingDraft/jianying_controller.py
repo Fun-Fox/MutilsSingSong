@@ -205,7 +205,16 @@ class Jianying_controller:
         if hasattr(self, "app") and self.app.Exists(0):
             self.app.SetTopmost(False)
 
-        self.app = uia.WindowControl(searchDepth=1, Compare=self.__jianying_window_cmp)
+        retry_count = 0
+        max_retries = 3
+
+        while retry_count < max_retries:
+            self.app = uia.WindowControl(searchDepth=1, Compare=self.__jianying_window_cmp)
+            if self.app.Exists(0):
+                break
+            retry_count += 1
+            time.sleep(1)  # 每次失败后等待一秒再重试
+
         if not self.app.Exists(0):
             raise AutomationError("剪映窗口未找到")
 

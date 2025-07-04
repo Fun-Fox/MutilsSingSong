@@ -145,7 +145,7 @@ def export_together_sing_video(video_folder):
     anim = [Text_loop_anim.彩色火焰, Text_loop_anim.心跳]
     if video_files:
         # 取第一个视频文件作为 first_video_path
-        first_video_path = os.path.join(video_folder, video_files[0])
+        first_video_path = os.path.join(video_folder, 'trimmed', video_files[0])
         print(f"✅ 第一个视频路径为: {first_video_path}")
     else:
         raise FileNotFoundError("未找到任何 .mp4 视频文件")

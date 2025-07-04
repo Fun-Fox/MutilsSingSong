@@ -43,6 +43,7 @@ def add_image(script, start_time, end_time, image_path, track_name, relative_ind
         source_timerange=draft.Timerange(0, video_material.duration),
         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=transform_x, transform_y=transform_y)
     )
+    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
     script.add_segment(video_segment, track_name)
     print(f"🖼️ 图片添加到轨道: {track_name}")
 
