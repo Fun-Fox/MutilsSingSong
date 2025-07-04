@@ -84,6 +84,7 @@ def export_who_is_singing_video(video_folder,values = [0.0, 0.0, 0.0, 1.0],title
     text_segment.add_effect(selected_effect)
     script.add_segment(text_segment, "text-title")
     anim_type = random.choice(anim)
+    
     for idx, video_file in enumerate(video_files):
         script.add_track(draft.Track_type.text, track_name=f'text-index-{idx}', relative_index=idx * 2 + 99)
         video_path = os.path.join(video_folder, "trimmed", video_file)

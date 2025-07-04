@@ -8,7 +8,7 @@ from sympy import false
 import pyJianYingDraft.pyJianYingDraft as draft
 from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
-    Export_framerate, Mask_type
+    Export_framerate, Mask_type, Text_loop_anim
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -33,7 +33,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
     return start_time, script
 
 
-def export_which_is_cutest_video(video_folder):
+def export_which_is_cutest_video(video_folder,title):
     # 获取 video_folder 路径下的所有 .mp4 视频文件
 
     cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
@@ -47,7 +47,7 @@ def export_which_is_cutest_video(video_folder):
         os.getenv("LOCALAPPDATA"),
         "JianyingPro\\User Data\\Projects\\com.lveditor.draft"
     )
-    draft_folder_name = '哪个AI娃娃最可爱'
+    draft_folder_name = '哪只猫最可爱'
     # 保存路径
     DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
@@ -57,11 +57,13 @@ def export_which_is_cutest_video(video_folder):
 
     video_path = os.path.join(video_folder, "trimmed", video_files[0])
     clip = VideoFileClip(video_path)
-    text_segment = draft.Text_segment("Which AI doll is the cutest?", trange("0s", f"{int(clip.duration)}s"),
+    text_segment = draft.Text_segment(title, trange("0s", f"{int(clip.duration)}s"),
                                       font=Font_type.新青年体,
-                                      style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                      style=Text_style(size=10.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
-
+    anim = [Text_loop_anim.彩色火焰,Text_loop_anim.文字泛光,Text_loop_anim.颤抖_III]
+    anim_type = random.choice(anim)
+    text_segment.add_animation(anim_type, "2.5s")
     effect_ids = [
         "7506817303296675123",
         "7507075178447359282",
