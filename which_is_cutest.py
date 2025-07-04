@@ -59,7 +59,7 @@ def export_which_is_cutest_video(video_folder,title):
     clip = VideoFileClip(video_path)
     text_segment = draft.Text_segment(title, trange("0s", f"{int(clip.duration)}s"),
                                       font=Font_type.新青年体,
-                                      style=Text_style(size=10.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+                                      style=Text_style(size=9.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
     anim = [Text_loop_anim.彩色火焰,Text_loop_anim.文字泛光,Text_loop_anim.颤抖_III]
     anim_type = random.choice(anim)

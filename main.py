@@ -78,8 +78,10 @@ if __name__ == "__main__":
         "Camp Clash! Unleash Your Cat Warrior"
     ]
 
-    title = random.choice(title_options)
+
+
     for i in range(1, 13):
+        title = random.choice(title_options)
         print(f"处理第{i}集")
         video_folder = os.path.join(root_dir, "assets", "Q", str(i))
         cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
