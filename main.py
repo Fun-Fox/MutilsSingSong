@@ -36,14 +36,14 @@ def concatenate_videos(video_paths, output_path):
 if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
 
-    for i in range(27, 29):
+    for i in range(22, 29):
         print(f"处理第{i}集")
         video_folder = os.path.join(root_dir, "assets", str(i))
         cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
         values = [0.0, 1.0, 0.0, 0.0]
         random.shuffle(values)
         # 竞猜-谁在唱歌
-        # export_who_is_singing_video(video_folder, values=values)
+        export_who_is_singing_video(video_folder, values=values)
         # 逐句唱歌-无声音的画面暂停
         export_step_by_step_music_video(video_folder)
         # 同句唱-擂台赛
