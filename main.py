@@ -55,7 +55,7 @@ if __name__ == "__main__":
             print("❌ 逐句唱歌-无声音的画面暂停失败")
         # 同句唱-擂台赛
         try:
-            export_sing_a_song_video(video_folder, title_1="The Ultimate Karaoke Battle",
+            export_sing_a_song_video(video_folder, title_1="Karaoke Battle",
                                      title_2="🏆 Battle of the Voices – Who Wins?")
         except:
             print("❌ 同句唱-擂台赛失败")
