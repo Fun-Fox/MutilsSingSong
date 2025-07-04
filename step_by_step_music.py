@@ -9,7 +9,7 @@ import tempfile
 import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
-    Text_style, Text_loop_anim
+    Text_style, Text_loop_anim, Mask_type
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -107,7 +107,7 @@ def export_step_by_step_music_video(video_folder):
     script.add_track(draft.Track_type.text, track_name=f'text-title', relative_index=100)
     text = "Sing Along! "
     # "Which cover is best?"
-    text_segment = draft.Text_segment(text, trange("0s", "10s"),
+    text_segment = draft.Text_segment(text, trange("0s", video.duration),
                                       font=Font_type.新青年体,
                                       style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
                                       clip_settings=Clip_settings(transform_y=0))
@@ -116,8 +116,8 @@ def export_step_by_step_music_video(video_folder):
         "🥰", "😍", "🤩", "🥳", "🤗", "😋", "😌", "😏", "😎", "🤓",
         "👶", "😂", "🤣", "😅", "😆", "😈", "😺", "😸", "😻", "😽"
     ]
-    anim= [Text_loop_anim.彩色火焰, Text_loop_anim.心跳, ]
-    anim_type=random.choice(anim)
+    anim = [Text_loop_anim.彩色火焰, Text_loop_anim.心跳, ]
+    anim_type = random.choice(anim)
     text_segment.add_animation(anim_type, "2.5s")
     effect_ids = [
         "7351319129124506930",
@@ -155,6 +155,9 @@ def export_step_by_step_music_video(video_folder):
                                                                         transform_y=transform_y))  # 与素材等长
         print(f"🎬 添加到视频轨道{idx}-{video_file}-video")
         # 添加到轨道
+        video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
+
+        # 添加到轨道
         script.add_segment(video_segment, f'{idx}-{video_file}-video', )
         start_time += video_material.duration
         return start_time, script
@@ -176,6 +179,8 @@ def export_step_by_step_music_video(video_folder):
                                                                         transform_x=transform_x,
                                                                         transform_y=transform_y))  # 与素材等长
         print(f"图片添加到视频轨道{idx}-{video_file}")
+        video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
+
         # 添加到轨道
         script.add_segment(video_segment, f'{idx}-{output_path_end}-image', )
 
@@ -230,7 +235,7 @@ def export_step_by_step_music_video(video_folder):
                                                       bold=True),
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
-        seg.add_animation(anim_type,"2.5s")
+        seg.add_animation(anim_type, "2.5s")
         script.add_segment(seg, f"text-index-{idx}")
 
         # 裁剪的节点片段
@@ -327,6 +332,9 @@ def export_step_by_step_music_video(video_folder):
                                                         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
                                                                                     transform_x=0.5,
                                                                                     transform_y=0.5))  # 与素材等长
+                    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8,
+                                           round_corner=45)
+
                     # 添加到轨道
                     script.add_segment(video_segment, f'{idx}-{output_path_start}-image', )
 
@@ -350,6 +358,8 @@ def export_step_by_step_music_video(video_folder):
                                                         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
                                                                                     transform_x=-0.5,
                                                                                     transform_y=-0.5))  # 与素材等长
+                    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8,
+                                           round_corner=45)
                     # 添加到轨道
                     script.add_segment(video_segment, f'{idx}-{output_path_start}-image', )
                 # 第三个宫格视频添加视频轨道
@@ -372,6 +382,8 @@ def export_step_by_step_music_video(video_folder):
                                                         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5,
                                                                                     transform_x=0.5,
                                                                                     transform_y=-0.5))  # 与素材等长
+                    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8,
+                                           round_corner=45)
                     # 添加到轨道
                     script.add_segment(video_segment, f'{idx}-{output_path_start}-image', )
                 # 第四个宫格视频添加视频轨道

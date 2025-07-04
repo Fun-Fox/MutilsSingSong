@@ -287,6 +287,7 @@ class Text_segment(Visual_segment):
             outro_trange = self.animations_instance and self.animations_instance.get_animation_trange("out")
             start = intro_trange.start if intro_trange else 0
             duration = self.target_timerange.duration - start - (outro_trange.duration if outro_trange else 0)
+            print(f"duration:{duration}")
         else:
             raise TypeError("Invalid animation type %s" % type(animation_type))
 

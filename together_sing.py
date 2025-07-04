@@ -9,7 +9,7 @@ from pydub import AudioSegment
 import pyJianYingDraft.pyJianYingDraft as draft
 from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
-    Export_framerate, Text_loop_anim
+    Export_framerate, Text_loop_anim, Mask_type
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,6 +23,9 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
         volume=volume,
         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=transform_x, transform_y=transform_y)
     )
+    # 添加到轨道
+    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
+
     script.add_segment(video_segment, track_name)
     return start_time + video_material.duration, script
 
@@ -37,6 +40,8 @@ def add_image(script, start_time, end_time, image_path, track_name, relative_ind
         source_timerange=draft.Timerange(0, video_material.duration),
         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=transform_x, transform_y=transform_y)
     )
+    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
+
     script.add_segment(video_segment, track_name)
     print(f"🖼️ 图片添加到轨道: {track_name}")
     return end_time
@@ -138,10 +143,20 @@ def export_together_sing_video(video_folder):
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
     script = draft.Script_file(1080, 1920)
     anim = [Text_loop_anim.彩色火焰, Text_loop_anim.心跳]
+    if video_files:
+        # 取第一个视频文件作为 first_video_path
+        first_video_path = os.path.join(video_folder, video_files[0])
+        print(f"✅ 第一个视频路径为: {first_video_path}")
+    else:
+        raise FileNotFoundError("未找到任何 .mp4 视频文件")
+
+    # 加载第一个视频
+    print("📘 正在加载第一个视频...")
+    video = VideoFileClip(first_video_path)
     # 添加标题文本
     text_segment_1 = draft.Text_segment(
         "What’s the singing order?",
-        trange("0s", "10s"),
+        trange("0s", video.duration),
         font=Font_type.新青年体,
         style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
