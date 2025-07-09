@@ -9,7 +9,7 @@ from pydub import AudioSegment
 import pyJianYingDraft.pyJianYingDraft as draft
 from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
-    Export_framerate, Text_loop_anim, Mask_type
+    Export_framerate, Text_loop_anim, Mask_type, Intro_type
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -69,7 +69,7 @@ def extract_video_frames(video_path):
     return first_frame_path, last_frame_path
 
 
-def export_together_sing_video(video_folder,title="What’s the singing order?"):
+def export_together_sing_video(video_folder, title="What’s the singing order?"):
     # Step 1: 预处理视频（裁剪）
 
     # Step 2: 获取视频文件列表
@@ -156,12 +156,12 @@ def export_together_sing_video(video_folder,title="What’s the singing order?")
     # 添加标题文本
     text_segment_1 = draft.Text_segment(
         title,
-        trange("0s", f"{video.duration/2}s"),
+        trange("0s", f"{video.duration / 2}s"),
         font=Font_type.新青年体,
         style=Text_style(size=13.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
         clip_settings=Clip_settings(transform_y=0)
     )
-    anim_type=random.choice(anim)
+    anim_type = random.choice(anim)
     text_segment_1.add_animation(anim_type, "2.5s")
 
     # # 添加标题文本
@@ -261,7 +261,56 @@ def export_together_sing_video(video_folder,title="What’s the singing order?")
         )
 
         cumulative_time += duration_us
+    # 结尾 欢迎关注部分
+    # render_index_track_mode_on
+    # 开启自由层级
+    script.add_track(draft.Track_type.video, track_name=f'end', absolute_index=99990)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    image_end_path = os.path.join(current_dir, 'doc', "end.jpg")
+    video_material = draft.Video_material(image_end_path)
+    video_segment = draft.Video_segment(video_material,
+                                        target_timerange=trange(f'{video.duration}s', "4s"), )  # 与素材等长
+    #
+    video_segment.add_animation(Intro_type.画出爱心, "1s")
 
+    script.add_segment(video_segment, f'end', )
+
+    script.add_track(draft.Track_type.text, track_name=f'text-1', absolute_index=99992)
+    text_1 = draft.Text_segment(f"""
+Follow me!
+Grab your crew
+Unlock 4 bangers:
+""", trange(f'{video.duration + 1}s', "3s"),
+                                font=Font_type.新青年体,
+                                style=Text_style(size=15, color=(0.8, 0.8, 0.8), underline=False, align=0),
+                                clip_settings=Clip_settings(transform_x=0,
+                                                            transform_y=0.5)
+                                )
+    script.add_track(draft.Track_type.text, track_name=f'text-2', absolute_index=99994)
+
+    text_2 = draft.Text_segment(f"""
+• Guess Who’s Singing
+• Song Order Showdown
+• Sing-Along Frenzy
+• Cover Duel
+""", trange(f'{video.duration + 1}s', "3s"),
+                                font=Font_type.新青年体,
+                                style=Text_style(size=13, color=(1.0, 1.0, 1.0), underline=False, align=0),
+                                clip_settings=Clip_settings(transform_x=0,
+                                                            transform_y=0)
+                                )
+    script.add_track(draft.Track_type.text, track_name=f'text-3', absolute_index=99996)
+    text_3 = draft.Text_segment(f"""
+Total vibes, nonstop fun!
+""", trange(f'{video.duration + 1}s', "3s"),
+                                font=Font_type.新青年体,
+                                style=Text_style(size=14, color=(0.5, 0.5, 0.5), underline=False, align=0),
+                                clip_settings=Clip_settings(transform_x=0,
+                                                            transform_y=-0.5)
+                                )
+    script.add_segment(text_1, f"text-1")
+    script.add_segment(text_2, f"text-2")
+    script.add_segment(text_3, f"text-3")
     # Step 10: 保存脚本并导出视频
     script.dump(DUMP_PATH)
     print("\n🎉 所有视频片段及截图已成功处理！")
@@ -282,7 +331,7 @@ def export_together_sing_video(video_folder,title="What’s the singing order?")
 
     # 裁剪视频为第一个视频的长度
     output_video = VideoFileClip(output_path)
-    clipped_video = output_video.subclipped(0, first_video_duration)  # 使用第一个视频的时长裁剪
+    clipped_video = output_video.subclipped(0, first_video_duration + 4)  # 使用第一个视频的时长裁剪
     clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mp4")
     clipped_video.write_videofile(clipped_output_path, codec="libx264", audio_codec="aac")
     print(f"✅ 视频已裁剪并保存至: {clipped_output_path}")

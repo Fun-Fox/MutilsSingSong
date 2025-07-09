@@ -9,12 +9,12 @@ import tempfile
 import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
-    Text_style, Text_loop_anim, Mask_type
+    Text_style, Text_loop_anim, Mask_type, Intro_type
 
 root_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def export_step_by_step_music_video(video_folder,title = "Sing Along!"):
+def export_step_by_step_music_video(video_folder, title="Sing Along!"):
     # === 第一步：从第一个视频提取卡点时间点 ===
 
     # 获取 video_folder 路径下的所有 .mp4 视频文件
@@ -397,6 +397,56 @@ def export_step_by_step_music_video(video_folder,title = "Sing Along!"):
                 video_material = draft.Video_material(output_video_path)
                 start_time += video_material.duration
 
+    # 结尾 欢迎关注部分
+    # render_index_track_mode_on
+    # 开启自由层级
+    script.add_track(draft.Track_type.video, track_name=f'end', absolute_index=99990)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    image_end_path = os.path.join(current_dir, 'doc', "end.jpg")
+    video_material = draft.Video_material(image_end_path)
+    video_segment = draft.Video_segment(video_material,
+                                        target_timerange=trange(f'{video.duration}s', "4s"), )  # 与素材等长
+    #
+    video_segment.add_animation(Intro_type.画出爱心, "1s")
+
+    script.add_segment(video_segment, f'end', )
+
+    script.add_track(draft.Track_type.text, track_name=f'text-1', absolute_index=99992)
+    text_1 = draft.Text_segment(f"""
+Follow me!
+Grab your crew
+Unlock 4 bangers:
+""", trange(f'{video.duration + 1}s', "3s"),
+                                font=Font_type.新青年体,
+                                style=Text_style(size=15, color=(0.8, 0.8, 0.8), underline=False, align=0),
+                                clip_settings=Clip_settings(transform_x=0,
+                                                            transform_y=0.5)
+                                )
+    script.add_track(draft.Track_type.text, track_name=f'text-2', absolute_index=99994)
+
+    text_2 = draft.Text_segment(f"""
+• Guess Who’s Singing
+• Song Order Showdown
+• Sing-Along Frenzy
+• Cover Duel
+""", trange(f'{video.duration + 1}s', "3s"),
+                                font=Font_type.新青年体,
+                                style=Text_style(size=13, color=(1.0, 1.0, 1.0), underline=False, align=0),
+                                clip_settings=Clip_settings(transform_x=0,
+                                                            transform_y=0)
+                                )
+    script.add_track(draft.Track_type.text, track_name=f'text-3', absolute_index=99996)
+    text_3 = draft.Text_segment(f"""
+Total vibes, nonstop fun!
+""", trange(f'{video.duration + 1}s', "3s"),
+                                font=Font_type.新青年体,
+                                style=Text_style(size=14, color=(0.5, 0.5, 0.5), underline=False, align=0),
+                                clip_settings=Clip_settings(transform_x=0,
+                                                            transform_y=-0.5)
+                                )
+    script.add_segment(text_1, f"text-1")
+    script.add_segment(text_2, f"text-2")
+    script.add_segment(text_3, f"text-3")
     script.dump(DUMP_PATH)
 
     print("\n🎉 所有视频片段及截图已成功处理！")
@@ -416,7 +466,7 @@ def export_step_by_step_music_video(video_folder,title = "Sing Along!"):
     output_video = VideoFileClip(output_path)
 
     # 使用原始视频的 duration 进行裁剪
-    clipped_video = output_video.subclipped(0, video.duration)
+    clipped_video = output_video.subclipped(0, video.duration + 4)
 
     # 保存裁剪后的视频
     clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mp4")

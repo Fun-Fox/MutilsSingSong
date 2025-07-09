@@ -40,16 +40,6 @@ from moviepy import VideoFileClip
 
 
 def capture_last_frame(video_path: str, output_image_path: str = None) -> Optional[str]:
-    """
-    截取视频的最后一帧并保存为图片
-
-    Args:
-        video_path (`str`): 视频文件路径
-        output_image_path (`str`, optional): 输出图片路径，若不指定则与视频同名 [.jpg](file://D:\PycharmProjects\MutilsSingSong\assets\1\trimmed_TikDownloader.io_7434069824562629930_hd_last.jpg) 保存在同一目录
-
-    Returns:
-        Optional[str]: 截图保存的路径，失败时返回 `None`
-    """
     if not os.path.exists(video_path):
         print(f"❌ 视频文件不存在：{video_path}")
         return None
@@ -82,35 +72,36 @@ if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
     # *****翻唱歌曲玩法*****
 
-    # for i in range(28, 29):
-    #     print(f"处理第{i}集")
-    #     video_folder = os.path.join(root_dir, "assets", str(i))
-    #     cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
-    #     values = [0.0, 1.0, 0.0, 0.0]
-    #     random.shuffle(values)
-    #     # 竞猜-谁在唱歌
-    #     try:
-    #         export_who_is_singing_video(video_folder, values=values, title="Who is singing?")
-    #     except:
-    #         print("❌ 竞猜-谁在唱歌失败")
-    #
-    #     # 逐句唱歌-无声音的画面暂停# 一起唱
-    #     try:
-    #         export_step_by_step_music_video(video_folder, title="Sing Along!")
-    #     except:
-    #         print("❌ 逐句唱歌-无声音的画面暂停失败")
-    #     # 同句唱-擂台赛
-    #     try:
-    #         export_sing_a_song_video(video_folder, title_1="Karaoke Battle",
-    #                                  title_2="🏆 Battle of the Voices – Who Wins?")
-    #     except:
-    #         print("❌ 同句唱-擂台赛失败")
-    #     # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
-    #     try:
-    #         export_together_sing_video(video_folder, title="What’s the singing order?")
-    #
-    #     except:
-    #         print("❌ 竞猜-逐句唱歌的顺序-有声音的画面不暂停失败")
+    for i in range(37, 39):
+        print(f"处理第{i}集")
+        video_folder = os.path.join(root_dir, "assets", str(i))
+        cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
+        values = [0.0, 1.0, 0.0, 0.0]
+        random.shuffle(values)
+        # 竞猜-谁在唱歌
+        try:
+            export_who_is_singing_video(video_folder, values=values, title="Who is singing?")
+        except Exception as e:
+            print("❌ 竞猜-谁在唱歌失败")
+            print(e)
+        #
+        # # 逐句唱歌-无声音的画面暂停# 一起唱
+        # try:
+        #     export_step_by_step_music_video(video_folder, title="Sing Along!")
+        # except:
+        #     print("❌ 逐句唱歌-无声音的画面暂停失败")
+        # # 同句唱-擂台赛
+        # try:
+        #     export_sing_a_song_video(video_folder, title_1="Karaoke Battle",
+        #                              title_2="🏆 Battle of the Voices – Who Wins?")
+        # except:
+        #     print("❌ 同句唱-擂台赛失败")
+        # # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
+        # try:
+        #     export_together_sing_video(video_folder, title="What’s the singing order?")
+        #
+        # except:
+        #     print("❌ 竞猜-逐句唱歌的顺序-有声音的画面不暂停失败")
 
     # *****Q版AI动漫卡片*****
 
@@ -143,6 +134,7 @@ if __name__ == "__main__":
     #     "Q-Heroes Clash! Lead Your Faction"
     # ]
     #
+
     # for i in range(8, 13):
     #     title = random.choice(title_options)
     #     print(f"处理第{i}集")
@@ -151,8 +143,8 @@ if __name__ == "__main__":
     #
     #     export_which_is_cutest_video(video_folder, title)
 
-    video_folder = os.path.join(root_dir, "output", "待发布","Q版")
-    video_files = [f for f in os.listdir(os.path.join(video_folder)) if f.endswith(".mp4")]
-    for video_file in video_files:
-        video_path = os.path.join(video_folder, video_file)
-        capture_last_frame(video_path)
+    # video_folder = os.path.join(root_dir, "output", "待发布","Q版")
+    # video_files = [f for f in os.listdir(os.path.join(video_folder)) if f.endswith(".mp4")]
+    # for video_file in video_files:
+    #     video_path = os.path.join(video_folder, video_file)
+    #     capture_last_frame(video_path)
