@@ -205,7 +205,7 @@ def export_sing_a_song_video(video_folder, title_1="The Ultimate Karaoke Battle"
     image_end_path = os.path.join(current_dir, 'doc', "end.jpg")
     video_material = draft.Video_material(image_end_path)
     video_segment = draft.Video_segment(video_material,
-                                        target_timerange=trange(f'{video.duration}s', "4s"), )  # 与素材等长
+                                        target_timerange=trange(f'{(total_duration / 1e6)}s', "4s"), )  # 与素材等长
     #
     video_segment.add_animation(Intro_type.画出爱心, "1s")
 
@@ -216,7 +216,7 @@ def export_sing_a_song_video(video_folder, title_1="The Ultimate Karaoke Battle"
 Follow me!
 Grab your crew
 Unlock 4 bangers:
-""", trange(f'{video.duration + 1}s', "3s"),
+""", trange(f'{(total_duration / 1e6)  + 1}s', "3s"),
                                 font=Font_type.新青年体,
                                 style=Text_style(size=15, color=(0.8, 0.8, 0.8), underline=False, align=0),
                                 clip_settings=Clip_settings(transform_x=0,
@@ -229,7 +229,7 @@ Unlock 4 bangers:
 • Song Order Showdown
 • Sing-Along Frenzy
 • Cover Duel
-""", trange(f'{video.duration + 1}s', "3s"),
+""", trange(f'{(total_duration / 1e6) + 1}s', "3s"),
                                 font=Font_type.新青年体,
                                 style=Text_style(size=13, color=(1.0, 1.0, 1.0), underline=False, align=0),
                                 clip_settings=Clip_settings(transform_x=0,
@@ -238,7 +238,7 @@ Unlock 4 bangers:
     script.add_track(draft.Track_type.text, track_name=f'text-3', absolute_index=99996)
     text_3 = draft.Text_segment(f"""
 Total vibes, nonstop fun!
-""", trange(f'{video.duration + 1}s', "3s"),
+""", trange(f'{(total_duration / 1e6) + 1}s', "3s"),
                                 font=Font_type.新青年体,
                                 style=Text_style(size=14, color=(0.5, 0.5, 0.5), underline=False, align=0),
                                 clip_settings=Clip_settings(transform_x=0,

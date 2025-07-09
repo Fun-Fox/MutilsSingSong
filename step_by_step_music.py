@@ -204,7 +204,7 @@ def export_step_by_step_music_video(video_folder, title="Sing Along!"):
 
         random_emoji = random.choice(emoji)
         if idx == 0:
-            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(video.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=12, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
@@ -213,7 +213,7 @@ def export_step_by_step_music_video(video_folder, title="Sing Along!"):
 
         elif idx == 1:
 
-            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(video.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=12, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
@@ -221,7 +221,7 @@ def export_step_by_step_music_video(video_folder, title="Sing Along!"):
 
         elif idx == 2:
 
-            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(video.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=12, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
@@ -230,7 +230,7 @@ def export_step_by_step_music_video(video_folder, title="Sing Along!"):
 
         else:
 
-            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(clip.duration)}s"),
+            seg = draft.Text_segment(f"{random_emoji}", trange("0s", f"{int(video.duration)}s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
