@@ -69,7 +69,7 @@ def extract_video_frames(video_path):
     return first_frame_path, last_frame_path
 
 
-def export_together_sing_video(video_folder, title="What’s the singing order?"):
+def export_what_singing_order(video_folder, title="What’s the singing order?"):
     # Step 1: 预处理视频（裁剪）
 
     # Step 2: 获取视频文件列表

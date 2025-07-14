@@ -59,25 +59,26 @@ def add_video_material(script, track_name, relative_index, video_path, start_tim
         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=transform_x, transform_y=transform_y)
     )
     # 添加到轨道
-    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
+    # video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
 
     script.add_track(draft.Track_type.video, track_name=track_name, relative_index=relative_index)
     script.add_segment(video_segment, track_name)
     return start_time + video_material.duration
 
 
-def export_sing_a_song_video(video_folder, title_1="The Ultimate Karaoke Battle",
-                             title_2="🏆 Battle of the Voices – Who Wins?"):
+def export_who_sang_it_better(video_folder, title_1="WHO SANG IT Better??",
+                              title_2="🏆Who?"):
     # 如果trimmed 目录存在则清除
     # 获取视频文件列表
     # video_folder = os.path.join(video_folder, "trimmed")
     video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
+    video_files = random.sample(video_files, k=2)  # 随机选取2个
     random.shuffle(video_files)
     base_folder = os.path.join(
         os.getenv("LOCALAPPDATA"),
         "JianyingPro\\User Data\\Projects\\com.lveditor.draft"
     )
-    draft_folder_name = '多人唱歌'
+    draft_folder_name = '2人唱歌比拼'
     DUMP_PATH = os.path.join(base_folder, draft_folder_name, "draft_content.json")
     os.makedirs(os.path.dirname(DUMP_PATH), exist_ok=True)
 
@@ -152,9 +153,9 @@ def export_sing_a_song_video(video_folder, title_1="The Ultimate Karaoke Battle"
             seg.add_animation(anim_type, "2.5s")
             script.add_segment(seg, f"text-index-{idx}")
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
-                                            -0.5, 0.5)
+                                            -0.5, 0.25)
             add_image(script, start_time, start_time + 80000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, -0.5,
-                      0.5)
+                      0.25)
         elif idx == 2:
             seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
                                      font=Font_type.新青年体,
@@ -164,37 +165,37 @@ def export_sing_a_song_video(video_folder, title_1="The Ultimate Karaoke Battle"
                                                                  transform_y=0.2))
             seg.add_animation(anim_type, "2.5s")
             script.add_segment(seg, f"text-index-{idx}")
-            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, 0.5)
+            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, 0.25)
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
                                             0.5, 0.5)
             add_image(script, start_time, start_time + 50000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, 0.5,
-                      0.5)
-        elif idx == 3:
-            seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
-                                     font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
-                                                      bold=True),
-                                     clip_settings=Clip_settings(transform_x=-0.2,
-                                                                 transform_y=-0.2))
-            seg.add_animation(anim_type, "2.5s")
-            script.add_segment(seg, f"text-index-{idx}")
-            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, -0.5, -0.5)
-            start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
-                                            -0.5, -0.5)
-            add_image(script, start_time, start_time + 50000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, -0.5,
-                      -0.5)
-        elif idx == 4:
-            seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
-                                     font=Font_type.新青年体,
-                                     style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
-                                                      bold=True),
-                                     clip_settings=Clip_settings(transform_x=0.2,
-                                                                 transform_y=-0.2))
-            seg.add_animation(anim_type, "2.5s")
-            script.add_segment(seg, f"text-index-{idx}")
-            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, -0.5)
-            start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
-                                            0.5, -0.5)
+                      0.25)
+        # elif idx == 3:
+        #     seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
+        #                              font=Font_type.新青年体,
+        #                              style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+        #                                               bold=True),
+        #                              clip_settings=Clip_settings(transform_x=-0.2,
+        #                                                          transform_y=-0.2))
+        #     seg.add_animation(anim_type, "2.5s")
+        #     script.add_segment(seg, f"text-index-{idx}")
+        #     add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, -0.5, -0.5)
+        #     start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
+        #                                     -0.5, -0.5)
+        #     add_image(script, start_time, start_time + 50000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, -0.5,
+        #               -0.5)
+        # elif idx == 4:
+        #     seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
+        #                              font=Font_type.新青年体,
+        #                              style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
+        #                                               bold=True),
+        #                              clip_settings=Clip_settings(transform_x=0.2,
+        #                                                          transform_y=-0.2))
+        #     seg.add_animation(anim_type, "2.5s")
+        #     script.add_segment(seg, f"text-index-{idx}")
+        #     add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, -0.5)
+        #     start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
+        #                                     0.5, -0.5)
 
         total_duration += video_duration
     # 结尾 欢迎关注部分
@@ -216,7 +217,7 @@ def export_sing_a_song_video(video_folder, title_1="The Ultimate Karaoke Battle"
 Follow me!
 Grab your crew
 Unlock 4 bangers:
-""", trange(f'{(total_duration / 1e6)  + 1}s', "3s"),
+""", trange(f'{(total_duration / 1e6) + 1}s', "3s"),
                                 font=Font_type.新青年体,
                                 style=Text_style(size=15, color=(0.8, 0.8, 0.8), underline=False, align=0),
                                 clip_settings=Clip_settings(transform_x=0,

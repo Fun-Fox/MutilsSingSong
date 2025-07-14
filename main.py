@@ -7,9 +7,9 @@ from moviepy import concatenate_videoclips, VideoFileClip
 
 from guess_who_is_sing import export_who_is_singing_video
 from preprocess.cute_video import cute_video
-from sing_a_song import export_sing_a_song_video
+from who_sang_better import export_who_sang_it_better
 from step_by_step_music import export_step_by_step_music_video
-from together_sing import export_together_sing_video
+from singing_order import export_what_singing_order
 from which_is_cutest import export_which_is_cutest_video
 
 
@@ -85,20 +85,20 @@ if __name__ == "__main__":
         #     print("❌ 竞猜-谁在唱歌失败")
         #     print(e)
         #
-        # # 逐句唱歌-无声音的画面暂停# 一起唱
+        # # 逐句唱歌-无声音的画面暂停# 一起唱（这个数据不好）
         # try:
         #     export_step_by_step_music_video(video_folder, title="Sing Along!")
         # except:
         #     print("❌ 逐句唱歌-无声音的画面暂停失败")
         # 同句唱-擂台赛
         try:
-            export_sing_a_song_video(video_folder, title_1="Cover Battle",
-                                     title_2="🏆 Battle of the Voices – Who Wins?")
+            export_who_sang_it_better(video_folder, title_1="WHO SANG IT BETTER??",
+                                     title_2="🏆Who?")
         except:
             print("❌ 同句唱-擂台赛失败")
         # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
         try:
-            export_together_sing_video(video_folder, title="What’s the singing order?")
+            export_what_singing_order(video_folder, title="What’s the singing order?")
 
         except:
             print("❌ 竞猜-逐句唱歌的顺序-有声音的画面不暂停失败")
