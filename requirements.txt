@@ -8,3 +8,4 @@ setuptools~=75.8.0
 pymediainfo~=7.0.1
 uiautomation~=2.0.25
 sympy~=1.14.0
+nemo_toolkit[asr]~=2.1.0

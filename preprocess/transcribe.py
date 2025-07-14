@@ -1,13 +1,15 @@
 import os
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
-from faster_whisper import WhisperModel
+
 from moviepy import VideoFileClip
 import warnings
 
+from preprocess.parakeet_asr import transcribe_audio_with_nemo
+from preprocess.whisper_asr import WhisperModelSingleton
+
 # 定义模型存放位置
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LOCAL_MODEL_PATH = os.path.join(root_dir, 'models', "large-v3")
 AUDIO_DIR = os.path.join(root_dir, "audios")  # 音频文件存储目录
 OUTPUT_DIR = os.path.join(root_dir, "output")  # 输出目录
 
@@ -27,42 +29,6 @@ def are_all_sentences_similar(seg1, seg2, threshold=0.8):
 
     return all(SequenceMatcher(None, s1, s2).ratio() >= threshold for s1, s2 in zip(seg1, seg2))
 
-
-class WhisperModelSingleton:
-    _instance = None
-    _model = None
-
-    def __new__(cls, model_size="large-v3", device="cuda"):
-        if cls._instance is None:
-            cls._instance = super(WhisperModelSingleton, cls).__new__(cls)
-
-            warnings.filterwarnings("ignore", category=FutureWarning)
-            warnings.filterwarnings("ignore", category=UserWarning)
-            # 如果本地存在模型，则从本地加载
-            if os.path.exists(LOCAL_MODEL_PATH):
-                print(f"📦 正在从本地加载模型: {LOCAL_MODEL_PATH}")
-                cls._model = WhisperModel(
-                    model_size_or_path=LOCAL_MODEL_PATH,
-                    device=device,
-                )
-            else:
-                print(f"🌐 未找到本地模型，正在从远程下载: {model_size}")
-                cls._model = WhisperModel(
-                    model_size_or_path=model_size,
-                    device=device,
-                )
-        return cls._instance
-
-    def transcribe(self, audio_path, **kwargs):
-        """
-        调用 whisper 模型进行语音识别
-        :param audio_path: 音频文件路径
-        :param kwargs: 其他 transcribe 参数
-        :return: segments, info
-        """
-        segments, info = self._model.transcribe(audio_path, **kwargs)
-        segments = list(segments)
-        return segments, info
 
 
 # 提供一个全局接口调用
@@ -149,7 +115,7 @@ def extract_audio_from_videos(video_dir, output_dir=AUDIO_DIR):
     return audio_files
 
 
-def batch_transcribe_audio(audio_files):
+def batch_whisper_transcribe_audio(audio_files):
     """批量转录音频文件"""
     whisper = get_whisper_model()
     srt_files = []
@@ -362,13 +328,48 @@ def crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir
                 print(f"❌ 裁剪失败：{video_file}，错误：{str(e)}")
 
 
-def main(video_dir):
+def whisper_main(video_dir):
     # 1. 提取音频
     audio_files = extract_audio_from_videos(video_dir)
     print(f"✅ 已提取音频文件: {audio_files}")
 
     # 2. 批量转录
-    srt_files = batch_transcribe_audio(audio_files)
+    srt_files = batch_whisper_transcribe_audio(audio_files)
+
+    print(f"✅ 已生成SRT文件: {srt_files}")
+
+    # 3. 查找共同歌词片段（至少4个文件中出现，7段连续）
+    common_segments, file_lyrics = find_common_segments(srt_files, min_files=4, min_segment_length=4,
+                                                        max_segment_length=40, similarity_threshold=0.3)
+    print(f"✅ 共同歌词片段：{common_segments}")
+    if not common_segments:
+        print("⚠️ 未找到符合条件的歌词片段")
+        return
+
+    # 4. 裁剪视频
+    output_dir = os.path.join(root_dir, "output", "cropped")
+    crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.3)
+
+def parakeet_main(video_dir):
+    audio_files = extract_audio_from_videos(video_dir, output_dir=AUDIO_DIR)
+
+    if not audio_files:
+        print("❌ 未找到有效的音频文件")
+        return []
+
+    # 第二步：对每个音频文件进行转录
+    srt_files = []
+    for audio_path in audio_files:
+        base_name = os.path.basename(audio_path).replace(".wav", "")
+        output_srt_path = os.path.join(OUTPUT_DIR, f"{base_name}.srt")
+
+        if not os.path.exists(output_srt_path):
+            result = transcribe_audio_with_nemo(audio_path, output_srt_path)
+            if result:
+                srt_files.append(result)
+        else:
+            srt_files.append(output_srt_path)
+
     print(f"✅ 已生成SRT文件: {srt_files}")
 
     # 3. 查找共同歌词片段（至少4个文件中出现，7段连续）
@@ -388,7 +389,7 @@ if __name__ == '__main__':
     # main(os.path.join(root_dir,  "pre","male"))
     # main(os.path.join(root_dir,  "pre/1"))
     # main(os.path.join(root_dir,  "pre/6"))
-    main(os.path.join(root_dir,  "pre/7"))
+    whisper_main(os.path.join(root_dir,  "pre/7"))
     # main(os.path.join(root_dir,  "pre/4"))
     # main(os.path.join(root_dir,  "pre"))
     # main(os.path.join(root_dir,  "pre","han"))
