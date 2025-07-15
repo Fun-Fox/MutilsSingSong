@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from moviepy import VideoFileClip
 import warnings
 
-from preprocess.parakeet_asr import transcribe_audio_with_nemo
+
 from preprocess.whisper_asr import WhisperModelSingleton
 
 # 定义模型存放位置
@@ -351,6 +351,7 @@ def whisper_main(video_dir):
     crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.3)
 
 def parakeet_main(video_dir):
+    from preprocess.parakeet_asr import transcribe_audio_with_nemo
     audio_files = extract_audio_from_videos(video_dir, output_dir=AUDIO_DIR)
 
     if not audio_files:
@@ -360,6 +361,7 @@ def parakeet_main(video_dir):
     # 第二步：对每个音频文件进行转录
     srt_files = []
     for audio_path in audio_files:
+
         base_name = os.path.basename(audio_path).replace(".wav", "")
         output_srt_path = os.path.join(OUTPUT_DIR, f"{base_name}.srt")
 
@@ -388,8 +390,8 @@ def parakeet_main(video_dir):
 if __name__ == '__main__':
     # main(os.path.join(root_dir,  "pre","male"))
     # main(os.path.join(root_dir,  "pre/1"))
-    # main(os.path.join(root_dir,  "pre/6"))
-    whisper_main(os.path.join(root_dir,  "pre/7"))
+    whisper_main(os.path.join(root_dir,  "pre/8"))
+    # parakeet_main(os.path.join(root_dir,  "pre/8"))
     # main(os.path.join(root_dir,  "pre/4"))
     # main(os.path.join(root_dir,  "pre"))
     # main(os.path.join(root_dir,  "pre","han"))

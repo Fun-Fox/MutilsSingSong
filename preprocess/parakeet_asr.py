@@ -1,27 +1,39 @@
 import os
 import sys
 from pathlib import Path
+
+import torch
 from moviepy import AudioFileClip  # 新增：使用 moviepy 获取音频时长
 import datetime  # 新增：用于时间格式化
 
-ROOT_DIR = Path(os.getcwd()).as_posix()
-os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
-os.environ['HF_HOME'] = ROOT_DIR + "/models"
-os.environ['HF_HUB_DISABLE_SYMLINKS_WARNING'] = 'true'
+# ROOT_DIR = Path(os.getcwd()).as_posix()
+# os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
+# os.environ['HF_HOME'] = ROOT_DIR + "/models"
+# os.environ['HF_HUB_DISABLE_SYMLINKS_WARNING'] = 'true'
 
 print("正在加载 NVIDIA NeMo ASR 模型...若不存在将下载")
-print("模型名称: nvidia/parakeet-tdt-0.6b-v2")
-print("这可能需要几分钟时间，请耐心等待...")
+# print("模型名称: nvidia/parakeet-tdt-0.6b-v2")
+# print("这可能需要几分钟时间，请耐心等待...")
 
 try:
     # 这一步会下载并加载模型，需要较长时间和网络连接
     import nemo.collections.asr as nemo_asr
 
-    asr_model = nemo_asr.models.ASRModel.from_pretrained(model_name="nvidia/parakeet-tdt-0.6b-v2")
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    LOCAL_MODEL_PATH = os.path.join(root_dir, 'models', "parakeet-tdt-0.6b-v2", 'parakeet-tdt-0.6b-v2.nemo')
+    asr_model = nemo_asr.models.ASRModel.restore_from(restore_path=LOCAL_MODEL_PATH)
+    # asr_model = nemo_asr.models.ASRModel.from_pretrained(model_name=LOCAL_MODEL_PATH)
+    # asr_model = nemo_asr.models.ASRModel.from_pretrained(model_name="nvidia/parakeet-tdt-0.6b-v2")
+    asr_model.eval()
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    asr_model.to(device)
+    asr_model.to(torch.float32)
+
     print("✅ NeMo ASR 模型加载成功！")
 except Exception as e:
     print(f"❌ 模型加载失败: {e}")
-    print("请确保已正确安装 'nemo_toolkit[asr]' 及其依赖，并有可用的网络连接。")
+    # print("请确保已正确安装 'nemo_toolkit[asr]' 及其依赖，并有可用的网络连接。")
     exit(1)
 
 print("=" * 50)
@@ -86,7 +98,7 @@ def generate_srt_file(segments: list, output_srt_path: str):
     print(f"✅ SRT 字幕文件已生成：{output_srt_path}")
     return output_srt_path
 
-
+import torchaudio
 def transcribe_audio_with_nemo(audio_path, output_srt_path):
     """使用 NeMo ASR 模型转录音频文件并生成 SRT 字幕"""
     print(f"🔊 正在转录音频: {audio_path}")
@@ -95,8 +107,21 @@ def transcribe_audio_with_nemo(audio_path, output_srt_path):
     cumulative_time_offset = 0.0
     try:
         # 对当前切片进行转录
-        output = asr_model.transcribe([audio_path], timestamps=True)
+        print("开始转录...")
+        print("音频路径:", audio_path)
+        audio, sr = torchaudio.load(audio_path)
+        if audio.shape[0] > 1:
+            audio = audio.mean(dim=0, keepdim=True)  # 混合为单声道
 
+        # 可选：保存临时文件或直接传递给模型
+        torchaudio.save("temp_mono.wav", audio, sr)
+
+        # 使用转换后的音频路径进行 ASR 处理
+        output = asr_model.transcribe(["temp_mono.wav"],timestamps=True)
+
+        # output = asr_model.transcribe([audio_path], )
+        print("✅ 音频转录完成")
+        print(output)
         if output and output[0].timestamp:
             # 修正并收集 segment 时间戳
             if 'segment' in output[0].timestamp:
@@ -125,3 +150,17 @@ def transcribe_audio_with_nemo(audio_path, output_srt_path):
         return None
 
 
+if __name__ == '__main__':
+    # audio_path = r'D:\PycharmProjects\MutilsSingSong\audios\2086-149220-0033.wav'
+    audio_path = r'D:\PycharmProjects\MutilsSingSong\audios\7000917742018694406_original.wav'
+    audio, sr = torchaudio.load(audio_path)
+    if audio.shape[0] > 1:
+        audio = audio.mean(dim=0, keepdim=True)  # 混合为单声道
+
+    # 可选：保存临时文件或直接传递给模型
+    torchaudio.save("temp_mono.wav", audio, sr)
+
+    # 使用转换后的音频路径进行 ASR 处理
+    output = asr_model.transcribe(["temp_mono.wav"])
+    # output = asr_model.transcribe([audio_path])
+    print(output)

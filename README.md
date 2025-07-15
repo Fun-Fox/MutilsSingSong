@@ -23,6 +23,8 @@ set HF_ENDPOINT=https://hf-mirror.com
 cd ..
 huggingface-cli download --repo-type model Systran/faster-whisper-large-v3 --local-dir models/faster-whisper-large-v3
 
+huggingface-cli download --repo-type model nvidia/parakeet-tdt-0.6b-v2 --local-dir models/parakeet-tdt-0.6b-v2
+
 # 安装PyTorch
 pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu128
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128

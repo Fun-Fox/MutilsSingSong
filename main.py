@@ -72,7 +72,7 @@ if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
     # *****翻唱歌曲玩法*****
 
-    for i in range(37, 39):
+    for i in range(39, 40):
         print(f"处理第{i}集")
         video_folder = os.path.join(root_dir, "assets", str(i))
         cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
@@ -92,16 +92,15 @@ if __name__ == "__main__":
         #     print("❌ 逐句唱歌-无声音的画面暂停失败")
         # 同句唱-擂台赛
         try:
-            export_who_sang_it_better(video_folder, title_1="WHO SANG IT BETTER??",
-                                     title_2="🏆Who?")
+            export_who_sang_it_better(video_folder, title_1="WHO SANG IT BETTER??",)
         except:
             print("❌ 同句唱-擂台赛失败")
-        # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
-        try:
-            export_what_singing_order(video_folder, title="What’s the singing order?")
-
-        except:
-            print("❌ 竞猜-逐句唱歌的顺序-有声音的画面不暂停失败")
+        # # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
+        # try:
+        #     export_what_singing_order(video_folder, title="What’s the singing order?")
+        #
+        # except:
+        #     print("❌ 竞猜-逐句唱歌的顺序-有声音的画面不暂停失败")
 
     # *****Q版AI动漫卡片*****
 

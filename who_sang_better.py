@@ -43,7 +43,7 @@ def add_image(script, start_time, end_time, image_path, track_name, relative_ind
         source_timerange=draft.Timerange(0, video_material.duration),
         clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=transform_x, transform_y=transform_y)
     )
-    video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
+    # video_segment.add_mask(Mask_type.矩形, center_x=0, center_y=-50, size=0.8, rect_width=0.8, round_corner=45)
     script.add_segment(video_segment, track_name)
     print(f"🖼️ 图片添加到轨道: {track_name}")
 
@@ -66,8 +66,7 @@ def add_video_material(script, track_name, relative_index, video_path, start_tim
     return start_time + video_material.duration
 
 
-def export_who_sang_it_better(video_folder, title_1="WHO SANG IT Better??",
-                              title_2="🏆Who?"):
+def export_who_sang_it_better(video_folder, title_1="WHO SANG IT Better??",):
     # 如果trimmed 目录存在则清除
     # 获取视频文件列表
     # video_folder = os.path.join(video_folder, "trimmed")
@@ -106,26 +105,26 @@ def export_who_sang_it_better(video_folder, title_1="WHO SANG IT Better??",
         title_1,
         trange("0s", f"{video.duration / 2}s"),
         font=Font_type.新青年体,
-        style=Text_style(size=12.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
-        clip_settings=Clip_settings(transform_y=0)
+        style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+        clip_settings=Clip_settings(transform_y=0.9)
     )
     anim = [Text_loop_anim.彩色火焰, Text_loop_anim.心跳]
     anim_type = random.choice(anim)
     text_segment_1.add_animation(anim_type, "2.5s")
 
-    text_segment_2 = draft.Text_segment(
-        title_2,
-        trange(f"{video.duration / 2}s", f"{video.duration / 2}s"),
-        font=Font_type.新青年体,
-        style=Text_style(size=10.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
-        clip_settings=Clip_settings(transform_y=0)
-    )
+    # text_segment_2 = draft.Text_segment(
+    #     title_2,
+    #     trange(f"{video.duration / 2}s", f"{video.duration / 2}s"),
+    #     font=Font_type.新青年体,
+    #     style=Text_style(size=14.0, color=(1.0, 1.0, 1.0), underline=False, align=1),
+    #     clip_settings=Clip_settings(transform_y=0.8)
+    # )
     text_segment_1.add_effect(selected_effect)
     selected_effect = random.choice(effect_ids)
-    text_segment_2.add_effect(selected_effect)
-    text_segment_2.add_animation(anim_type, "2.5s")
+    # text_segment_2.add_effect(selected_effect)
+    # text_segment_2.add_animation(anim_type, "2.5s")
     script.add_segment(text_segment_1, "text-title")
-    script.add_segment(text_segment_2, "text-title")
+    # script.add_segment(text_segment_2, "text-title")
 
     total_duration = 0
     start_time = 0
@@ -144,32 +143,32 @@ def export_who_sang_it_better(video_folder, title_1="WHO SANG IT Better??",
         script.add_track(draft.Track_type.text, track_name=f'text-index-{idx}', relative_index=idx * 2 + 200)
 
         if idx == 1:
-            seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
+            seg = draft.Text_segment(f"Cover {idx}", trange("0s", f"120s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
-                                     clip_settings=Clip_settings(transform_x=-0.2,
-                                                                 transform_y=0.2))
+                                     clip_settings=Clip_settings(transform_x=-0.7,
+                                                                 transform_y=0.7))
             seg.add_animation(anim_type, "2.5s")
             script.add_segment(seg, f"text-index-{idx}")
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
-                                            -0.5, 0.25)
+                                            -0.5, 0)
             add_image(script, start_time, start_time + 80000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, -0.5,
-                      0.25)
+                      0)
         elif idx == 2:
-            seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
+            seg = draft.Text_segment(f"Cover {idx}", trange("0s", f"120s"),
                                      font=Font_type.新青年体,
                                      style=Text_style(size=15, color=(1.0, 1.0, 1.0), underline=False, align=1,
                                                       bold=True),
-                                     clip_settings=Clip_settings(transform_x=0.2,
-                                                                 transform_y=0.2))
+                                     clip_settings=Clip_settings(transform_x=0.7,
+                                                                 transform_y=0.7))
             seg.add_animation(anim_type, "2.5s")
             script.add_segment(seg, f"text-index-{idx}")
-            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, 0.25)
+            add_image(script, 0, start_time, first_frame, f"{idx}-first-frame", (idx + 5) * 2, 0.5, 0)
             start_time = add_video_material(script, track_video_name, track_relative_index, full_video_path, start_time,
-                                            0.5, 0.5)
+                                            0.5, 0)
             add_image(script, start_time, start_time + 50000000, last_frame, f"{idx}-last-frame", (idx + 5) * 2, 0.5,
-                      0.25)
+                      0)
         # elif idx == 3:
         #     seg = draft.Text_segment(f"{idx}", trange("13s", f"120s"),
         #                              font=Font_type.新青年体,
