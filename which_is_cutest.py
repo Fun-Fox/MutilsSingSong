@@ -144,6 +144,7 @@ def export_which_is_cutest_video(video_folder,title):
                                      clip_settings=Clip_settings(transform_x=0.2,
                                                                  transform_y=-0.2))
             script.add_segment(seg, f"text-index-{idx}")
+
     script.dump(DUMP_PATH)
 
     print("\n🎉 所有视频片段及截图已成功处理！")

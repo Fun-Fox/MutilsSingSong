@@ -247,6 +247,27 @@ Total vibes, nonstop fun!
     script.add_segment(text_1, f"text-1")
     script.add_segment(text_2, f"text-2")
     script.add_segment(text_3, f"text-3")
+
+    script.add_track(draft.Track_type.sticker, track_name=f'sticker-1', absolute_index=99997)
+    script.add_track(draft.Track_type.sticker, track_name=f'sticker-2', absolute_index=99998)
+    script.add_track(draft.Track_type.sticker, track_name=f'sticker-3', absolute_index=99999)
+    sticker_segment_1 = draft.Sticker_segment("7210227770583043383",
+                                              trange(f'{video.duration + 1}s', "3s"),
+                                              clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=0.4,
+                                                                          transform_y=-0.2))
+
+    sticker_segment_2 = draft.Sticker_segment("7210227770583043383",
+                                              trange(f'{video.duration + 1}s', "3s"),
+                                              clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=0.4,
+                                                                          transform_y=-0.4))
+
+    sticker_segment_3 = draft.Sticker_segment("7210227770583043383",
+                                              trange(f'{video.duration + 1}s', "3s"),
+                                              clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=0.4,
+                                                                          transform_y=-0.6))
+    script.add_segment(sticker_segment_1, f"sticker-1")
+    script.add_segment(sticker_segment_2, f"sticker-2")
+    script.add_segment(sticker_segment_3, f"sticker-3")
     script.dump(DUMP_PATH)
     print("\n🎉 所有视频片段及截图已成功处理！")
 
