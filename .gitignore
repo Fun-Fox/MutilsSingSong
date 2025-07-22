@@ -21,3 +21,4 @@ audios
 /models
 /models/parakeet-tdt-0.6b-v2/*
 /models/faster-whisper-large-v3/*
+/models/mobilenetv3/*

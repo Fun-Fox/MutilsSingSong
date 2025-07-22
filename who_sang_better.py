@@ -252,17 +252,17 @@ Total vibes, nonstop fun!
     script.add_track(draft.Track_type.sticker, track_name=f'sticker-2', absolute_index=99998)
     script.add_track(draft.Track_type.sticker, track_name=f'sticker-3', absolute_index=99999)
     sticker_segment_1 = draft.Sticker_segment("7210227770583043383",
-                                              trange(f'{video.duration + 1}s', "3s"),
+                                              trange(f'{(total_duration / 1e6) + 1}s', "3s"),
                                               clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=0.4,
                                                                           transform_y=-0.2))
 
     sticker_segment_2 = draft.Sticker_segment("7210227770583043383",
-                                              trange(f'{video.duration + 1}s', "3s"),
+                                              trange(f'{(total_duration / 1e6) + 1}s', "3s"),
                                               clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=0.4,
                                                                           transform_y=-0.4))
 
     sticker_segment_3 = draft.Sticker_segment("7210227770583043383",
-                                              trange(f'{video.duration + 1}s', "3s"),
+                                              trange(f'{(total_duration / 1e6) + 1}s', "3s"),
                                               clip_settings=Clip_settings(scale_x=0.5, scale_y=0.5, transform_x=0.4,
                                                                           transform_y=-0.6))
     script.add_segment(sticker_segment_1, f"sticker-1")

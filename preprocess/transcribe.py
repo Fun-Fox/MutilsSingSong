@@ -390,7 +390,7 @@ def parakeet_main(video_dir):
 if __name__ == '__main__':
     # main(os.path.join(root_dir,  "pre","male"))
     # main(os.path.join(root_dir,  "pre/1"))
-    whisper_main(os.path.join(root_dir,  "pre/8"))
+    whisper_main(os.path.join(root_dir,  "pre/11"))
     # parakeet_main(os.path.join(root_dir,  "pre/8"))
     # main(os.path.join(root_dir,  "pre/4"))
     # main(os.path.join(root_dir,  "pre"))
