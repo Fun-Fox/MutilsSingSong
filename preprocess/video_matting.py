@@ -62,7 +62,11 @@ def matting_video_to_images(video_path, output_folder, bg_color='white', batch_s
             video_frames = video_frames.half()
 
         with torch.no_grad():
-            fgrs, phas, *rec = model(video_frames, *rec, auto_downsample_ratio(height, width))
+            try:
+                fgrs, phas, *rec = model(video_frames, *rec, auto_downsample_ratio(height, width))
+            except Exception as e:
+                print(f"处理帧时出错,后续帧处理跳过")
+                break
             masks = phas.gt(0).float()  # 转为 float 避免 bool 减法错误
 
             if transparent:
@@ -176,7 +180,7 @@ if __name__ == '__main__':
 
     matting_args = dict(
         bg_color='black',  # 可选 black / white / transparent
-        batch_size=4,
+        batch_size=8,
         fp16=True,  # 若 GPU 支持 FP16 推荐开启
         transparent=False  # 是否输出透明背景图像（RGBA）
     )
