@@ -74,11 +74,12 @@ def matting_video_to_images(video_path, output_folder, bg_color='white', batch_s
                 fgrs = fgrs * masks + (1.0 - masks) * 1.0
             else:
                 # 固定颜色背景
+                print(f"🎨 固定颜色背景：{bg_color}")
                 bg = torch.Tensor(ImageColor.getrgb(bg_color)[:3]).float() / 255.
                 bg = repeat(bg, "c -> n c h w", n=fgrs.shape[0], h=1, w=1).to(device)
                 if fp16:
                     bg = bg.half()
-                fgrs = fgrs * masks + (1.0 - masks) * 1.0
+                fgrs = fgrs * masks + bg * (1.0 - masks)
 
         fgrs = rearrange(fgrs.float().cpu(), "n c h w -> n h w c").numpy()
 
@@ -118,7 +119,7 @@ def synthesize_video_from_images(output_folder, video_info, video_path, transpar
     从图像序列生成视频，并提取原始视频音频进行合成
     """
     fps = video_info['fps']
-    file_name = os.path.basename(video_path)
+    file_name = os.path.splitext(os.path.basename(video_path))[0]
 
     if transparent:
         image_files = sorted(
