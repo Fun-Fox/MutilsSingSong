@@ -74,7 +74,7 @@ def matting_video_to_images(video_path, output_folder, bg_color='white', batch_s
                 fgrs = fgrs * masks + (1.0 - masks) * 1.0
             else:
                 # 固定颜色背景
-                print(f"🎨 固定颜色背景：{bg_color}")
+                # print(f"🎨 固定颜色背景：{bg_color}")
                 bg = torch.Tensor(ImageColor.getrgb(bg_color)[:3]).float() / 255.
                 bg = repeat(bg, "c -> n c h w", n=fgrs.shape[0], h=1, w=1).to(device)
                 if fp16:
@@ -150,7 +150,7 @@ def synthesize_video_from_images(output_folder, video_info, video_path, transpar
             print("🔊 正在合成音频到视频...")
             final_video_path = output_video_path.replace(".mp4", "_with_audio.mp4")
             final_clip = VideoFileClip(output_video_path)
-            final_clip.audio=AudioFileClip(audio_path)
+            final_clip.audio = AudioFileClip(audio_path)
             final_clip.write_videofile(final_video_path, codec="libx264", audio_codec="aac", logger=None)
 
         print("🎉 视频合成完成:", final_video_path)
@@ -158,7 +158,8 @@ def synthesize_video_from_images(output_folder, video_info, video_path, transpar
         print("⚠️ 未找到图像序列，无法生成视频。")
 
 
-def process_videos_in_folder(input_folder, output_folder, bg_color='white', batch_size=8, fp16=False, transparent=False):
+def process_videos_in_folder(input_folder, output_folder, bg_color='white', batch_size=8, fp16=False,
+                             transparent=False):
     """
     遍历文件夹中的视频并进行抠图处理（不保存 mask 图像）
     """
@@ -176,8 +177,8 @@ def process_videos_in_folder(input_folder, output_folder, bg_color='white', batc
 
 
 if __name__ == '__main__':
-    input_folder = r'D:\PycharmProjects\MutilsSingSong\assets\51'  # 输入视频文件夹
-    output_folder = r'D:\PycharmProjects\MutilsSingSong\assets\51\matting'  # 输出文件夹
+    input_folder = os.path.join(root_dir, "assets", "50")
+    output_folder = os.path.join(root_dir, "assets", "50", "matting")  # 输出文件夹
 
     matting_args = dict(
         bg_color='black',  # 可选 black / white / transparent
