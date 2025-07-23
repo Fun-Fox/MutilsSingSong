@@ -114,9 +114,15 @@ def matting_video_to_images(video_path, output_folder, bg_color='white', batch_s
     }
 
 
+import os
+import subprocess
+import shutil
+from pathlib import Path
+
+
 def synthesize_video_from_images(output_folder, video_info, video_path, transparent=False):
     """
-    从图像序列生成视频，并提取原始视频音频进行合成
+    使用 ffmpeg 从图像序列生成透明视频，并提取原始视频音频进行合成
     """
     fps = video_info['fps']
     file_name = os.path.splitext(os.path.basename(video_path))[0]
@@ -126,7 +132,7 @@ def synthesize_video_from_images(output_folder, video_info, video_path, transpar
             [os.path.join(output_folder, f) for f in os.listdir(output_folder) if f.endswith("_rgba.png")],
             key=lambda x: int(x.split("_")[-2])
         )
-        output_video_path = os.path.join(os.path.dirname(output_folder), f"{file_name}_rgba.mp4")
+        output_video_path = os.path.join(os.path.dirname(output_folder), f"{file_name}_rgba.mov")
     else:
         image_files = sorted(
             [os.path.join(output_folder, f) for f in os.listdir(output_folder) if f.endswith("_fgr.png")],
@@ -134,39 +140,69 @@ def synthesize_video_from_images(output_folder, video_info, video_path, transpar
         )
         output_video_path = os.path.join(os.path.dirname(output_folder), f"{file_name}_fgr.mp4")
 
-    if image_files:
-        print("🎬 正在生成视频...")
-        # 使用 imageio 读取图像以保留 alpha 通道
-        from imageio import imread
-        images = [imread(f) for f in image_files]
-        clip = ImageSequenceClip(images, fps=fps)
-
-        # 输出为 .mov 格式，保留 alpha 通道
-        output_video_path = os.path.join(os.path.dirname(output_folder), f"{file_name}_rgba.mov")
-        clip.write_videofile(
-            output_video_path,
-            codec="libx264rgb",
-            ffmpeg_params=["-pix_fmt", "yuva420p"],
-            audio_codec="aac",
-            logger=None
-        )
-        # 提取原始音频
-        print("🎵 正在提取原始视频音频...")
-        audio_path = os.path.join(output_folder, "extracted_audio.aac")
-        original_clip = VideoFileClip(video_path)
-        if original_clip.audio:
-            original_clip.audio.write_audiofile(audio_path, codec="aac")
-
-        if os.path.exists(audio_path):
-            print("🔊 正在合成音频到视频...")
-            final_video_path = output_video_path.replace(".mp4", "_with_audio.mp4")
-            final_clip = VideoFileClip(output_video_path)
-            final_clip.audio = AudioFileClip(audio_path)
-            final_clip.write_videofile(final_video_path, codec="libx264", audio_codec="aac", logger=None)
-
-        print("🎉 视频合成完成:", final_video_path)
-    else:
+    if not image_files:
         print("⚠️ 未找到图像序列，无法生成视频。")
+        return
+
+    print("🎬 正在使用 ffmpeg 合成透明视频...")
+
+    # 图像序列文件名格式
+    image_pattern = os.path.join(output_folder, "frame_%05d_rgba.png" if transparent else "frame_%05d_fgr.png")
+
+    # 生成临时音频文件路径
+    audio_path = os.path.join(output_folder, "extracted_audio.aac")
+
+    # Step 1: 提取原始视频音频
+    print("🎵 正在提取原始视频音频...")
+    cmd_extract_audio = [
+        "ffmpeg",
+        "-i", video_path,
+        "-vn", "-acodec", "aac",
+        "-y", audio_path
+    ]
+    subprocess.run(cmd_extract_audio, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    has_audio = os.path.exists(audio_path)
+
+    # Step 2: 使用 ffmpeg 合成透明视频
+    # "ffmpeg -i %d.png -vcodec qtrle movie_with_alpha.mov"
+
+    cmd_video = [
+        "ffmpeg",
+        "-framerate", str(fps),
+        "-i", image_pattern,
+        "-vcodec", "qtrle",  # 或 "libx264rgb"
+        "-pix_fmt", "yuva420p",  # 支持 alpha 的像素格式
+        "-y", output_video_path
+    ]
+    print("🎥 正在调用 ffmpeg 合成视频...")
+    subprocess.run(cmd_video, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    # Step 3: 合并音频（如果存在）
+    if has_audio:
+        print("🔊 正在合成音频到视频...")
+        final_video_path = output_video_path.replace(".mov",
+                                                     "_with_audio.mov") if transparent else output_video_path.replace(
+            ".mp4", "_with_audio.mp4")
+
+        cmd_merge = [
+            "ffmpeg",
+            "-i", output_video_path,
+            "-i", audio_path,
+            "-c:v", "copy",
+            "-c:a", "aac",
+            "-strict", "experimental",
+            "-shortest",
+            "-y", final_video_path
+        ]
+        subprocess.run(cmd_merge, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        print(f"🎉 视频和音频已合成：{final_video_path}")
+    else:
+        print(f"🎉 视频已合成（无音频）：{output_video_path}")
+
+    # Step 4: 清理中间文件（可选）
+    if os.path.exists(audio_path):
+        os.remove(audio_path)
 
 
 def process_videos_in_folder(input_folder, output_folder, bg_color='white', batch_size=8, fp16=False,
