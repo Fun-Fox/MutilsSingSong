@@ -72,7 +72,7 @@ if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
     # *****翻唱歌曲玩法*****
 
-    for i in range(49, 52):
+    for i in range(51, 52):
         print(f"处理第{i}集")
         video_folder = os.path.join(root_dir, "assets", str(i))
         cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)

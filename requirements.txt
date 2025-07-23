@@ -10,3 +10,4 @@ uiautomation~=2.0.25
 sympy~=1.14.0
 nemo_toolkit[asr]>=2.2.1
 cuda-python==12.8
+imageio==2.37.0

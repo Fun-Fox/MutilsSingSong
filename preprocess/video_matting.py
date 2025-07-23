@@ -136,9 +136,20 @@ def synthesize_video_from_images(output_folder, video_info, video_path, transpar
 
     if image_files:
         print("🎬 正在生成视频...")
-        clip = ImageSequenceClip(image_files, fps=fps)
-        clip.write_videofile(output_video_path, codec="libx264", audio_codec="aac", logger=None)
+        # 使用 imageio 读取图像以保留 alpha 通道
+        from imageio import imread
+        images = [imread(f) for f in image_files]
+        clip = ImageSequenceClip(images, fps=fps)
 
+        # 输出为 .mov 格式，保留 alpha 通道
+        output_video_path = os.path.join(os.path.dirname(output_folder), f"{file_name}_rgba.mov")
+        clip.write_videofile(
+            output_video_path,
+            codec="libx264rgb",
+            ffmpeg_params=["-pix_fmt", "yuva420p"],
+            audio_codec="aac",
+            logger=None
+        )
         # 提取原始音频
         print("🎵 正在提取原始视频音频...")
         audio_path = os.path.join(output_folder, "extracted_audio.aac")
@@ -184,7 +195,7 @@ if __name__ == '__main__':
         bg_color='black',  # 可选 black / white / transparent
         batch_size=8,
         fp16=True,  # 若 GPU 支持 FP16 推荐开启
-        transparent=False  # 是否输出透明背景图像（RGBA）
+        transparent=True  # 是否输出透明背景图像（RGBA）
     )
 
     process_videos_in_folder(input_folder, output_folder, **matting_args)
