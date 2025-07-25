@@ -77,25 +77,28 @@ if __name__ == "__main__":
         print(f"处理第{i}集")
         input_folder = os.path.join(root_dir, "assets", str(i))
         output_folder = os.path.join(root_dir, "assets", str(i), "matting")  # 输出文件夹
-
-        matting_args = dict(
-            bg_color='black',  # 可选 black / white / transparent
-            batch_size=8,
-            fp16=True,  # 若 GPU 支持 FP16 推荐开启
-            transparent=True  # 是否输出透明背景图像（RGBA）
-        )
-
-        process_videos_in_folder(input_folder, output_folder, **matting_args)
-
-        # video_folder = os.path.join(root_dir, "assets", str(i))
         video_folder = os.path.join(output_folder)
+
+        trimmed_path = os.path.join(output_folder, 'trimmed')
+        if os.path.exists(trimmed_path):
+            matting_args = dict(
+                bg_color='black',  # 可选 black / white / transparent
+                batch_size=8,
+                fp16=True,  # 若 GPU 支持 FP16 推荐开启
+                transparent=True  # 是否输出透明背景图像（RGBA）
+            )
+
+            # process_videos_in_folder(input_folder, output_folder, **matting_args)
+
+            # video_folder = os.path.join(root_dir, "assets", str(i))
+            cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
+
         video_files = [f for f in os.listdir(video_folder) if
                        os.path.splitext(f)[1].lower() in {'.mp4', '.avi', '.mkv', '.mov', '.flv'}]
 
         print(f'视频文件数量: {len(video_files)}')
         video_len = len(video_files)
 
-        cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
         values = [0.0, 1.0, 0.0, 0.0]
         random.shuffle(values)
 

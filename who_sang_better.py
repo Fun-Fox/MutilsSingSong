@@ -69,7 +69,7 @@ def export_who_sang_it_better(video_folder, title_1="WHO SANG IT Better??",):
     # 如果trimmed 目录存在则清除
     # 获取视频文件列表
     # video_folder = os.path.join(video_folder, "trimmed")
-    video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
+    video_files = [f for f in os.listdir(video_folder) if f.endswith("_hd_rgba_with_audio.mov")]
     video_files = random.sample(video_files, k=2)  # 随机选取2个
     random.shuffle(video_files)
     base_folder = os.path.join(
