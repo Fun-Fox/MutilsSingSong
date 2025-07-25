@@ -73,7 +73,7 @@ if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
     # *****翻唱歌曲玩法*****
 
-    for i in range(51, 52):
+    for i in range(53, 63):
         print(f"处理第{i}集")
         input_folder = os.path.join(root_dir, "assets", str(i))
         output_folder = os.path.join(root_dir, "assets", str(i), "matting")  # 输出文件夹

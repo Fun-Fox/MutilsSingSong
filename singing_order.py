@@ -7,7 +7,7 @@ from moviepy import VideoFileClip, concatenate_audioclips, AudioFileClip
 from pydub import AudioSegment
 
 import pyJianYingDraft.pyJianYingDraft as draft
-from preprocess.cute_video import cute_video
+# from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
     Export_framerate, Text_loop_anim, Mask_type, Intro_type
 

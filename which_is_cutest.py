@@ -6,7 +6,7 @@ from moviepy import VideoFileClip
 from sympy import false
 
 import pyJianYingDraft.pyJianYingDraft as draft
-from preprocess.cute_video import cute_video
+# from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, trange, Font_type, Text_style, Export_resolution, \
     Export_framerate, Mask_type, Text_loop_anim
 

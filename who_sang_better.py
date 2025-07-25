@@ -4,7 +4,6 @@ from moviepy import VideoFileClip
 import os
 import cv2
 import pyJianYingDraft.pyJianYingDraft as draft
-from preprocess.cute_video import cute_video
 from pyJianYingDraft.pyJianYingDraft import Clip_settings, Export_resolution, Export_framerate, trange, Font_type, \
     Text_style, Text_loop_anim, Mask_type, Intro_type
 
