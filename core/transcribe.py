@@ -5,7 +5,6 @@ from concurrent.futures import ThreadPoolExecutor
 from moviepy import VideoFileClip
 import warnings
 
-
 from core.whisper_asr import WhisperModelSingleton
 
 # 定义模型存放位置
@@ -28,7 +27,6 @@ def are_all_sentences_similar(seg1, seg2, threshold=0.8):
         return False  # 只比较长度相同的片段
 
     return all(SequenceMatcher(None, s1, s2).ratio() >= threshold for s1, s2 in zip(seg1, seg2))
-
 
 
 # 提供一个全局接口调用
@@ -144,7 +142,8 @@ def batch_whisper_transcribe_audio(audio_files):
 def process_single_audio(whisper, audio_path, output_srt_path):
     """处理单个音频文件"""
     print(f"🔊 处理音频: {audio_path}")
-    segments, _ = whisper.transcribe(audio_path, beam_size=7,language="en", condition_on_previous_text=False, word_timestamps=True)
+    segments, _ = whisper.transcribe(audio_path, beam_size=7, language="en", condition_on_previous_text=False,
+                                     word_timestamps=True)
     generate_srt(segments, output_srt_path)
     return output_srt_path
 
@@ -350,6 +349,7 @@ def whisper_main(video_dir):
     output_dir = os.path.join(root_dir, "output", "cropped")
     crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.3)
 
+
 def parakeet_main(video_dir):
     from core.parakeet_asr import transcribe_audio_with_nemo
     audio_files = extract_audio_from_videos(video_dir, output_dir=AUDIO_DIR)
@@ -363,7 +363,7 @@ def parakeet_main(video_dir):
     for audio_path in audio_files:
 
         base_name = os.path.basename(audio_path).replace(".wav", "")
-        output_srt_path = os.path.join(OUTPUT_DIR, f"{base_name}.srt")
+        output_srt_path = os.path.join(OUTPUT_DIR, 'srt', f"{base_name}.srt")
 
         if not os.path.exists(output_srt_path):
             result = transcribe_audio_with_nemo(audio_path, output_srt_path)
@@ -391,7 +391,7 @@ if __name__ == '__main__':
     # main(os.path.join(root_dir,  "pre","male"))
     # main(os.path.join(root_dir,  "pre/1"))
     # whisper_main(os.path.join(root_dir,  "pre/13"))
-    whisper_main(os.path.join(root_dir,  "pre/14"))
+    whisper_main(os.path.join(root_dir, "pre/14"))
     # parakeet_main(os.path.join(root_dir,  "pre/8"))
     # main(os.path.join(root_dir,  "pre/4"))
     # main(os.path.join(root_dir,  "pre"))
