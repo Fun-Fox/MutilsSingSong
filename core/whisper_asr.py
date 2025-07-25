@@ -4,7 +4,7 @@ import warnings
 from faster_whisper import WhisperModel
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LOCAL_MODEL_PATH = os.path.join(root_dir, 'models', "large-v3")
+LOCAL_MODEL_PATH = os.path.join(root_dir, 'models', "faster-whisper-large-v3")
 
 class WhisperModelSingleton:
     _instance = None

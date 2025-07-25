@@ -5,8 +5,9 @@ from typing import Optional
 
 from moviepy import concatenate_videoclips, VideoFileClip
 
+from core.video_matting import process_videos_in_folder
 from guess_who_is_sing import export_who_is_singing_video
-from preprocess.cute_video import cute_video
+from core.cute_video import cute_video
 from who_sang_better import export_who_sang_it_better
 from step_by_step_music import export_step_by_step_music_video
 from singing_order import export_what_singing_order
@@ -74,35 +75,59 @@ if __name__ == "__main__":
 
     for i in range(51, 52):
         print(f"处理第{i}集")
-        video_folder = os.path.join(root_dir, "assets", str(i))
+        input_folder = os.path.join(root_dir, "assets", str(i))
+        output_folder = os.path.join(root_dir, "assets", str(i), "matting")  # 输出文件夹
+
+        matting_args = dict(
+            bg_color='black',  # 可选 black / white / transparent
+            batch_size=8,
+            fp16=True,  # 若 GPU 支持 FP16 推荐开启
+            transparent=True  # 是否输出透明背景图像（RGBA）
+        )
+
+        process_videos_in_folder(input_folder, output_folder, **matting_args)
+
+        # video_folder = os.path.join(root_dir, "assets", str(i))
+        video_folder = os.path.join(output_folder)
+        video_files = [f for f in os.listdir(video_folder) if
+                       os.path.splitext(f)[1].lower() in {'.mp4', '.avi', '.mkv', '.mov', '.flv'}]
+
+        print(f'视频文件数量: {len(video_files)}')
+        video_len = len(video_files)
+
         cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
         values = [0.0, 1.0, 0.0, 0.0]
         random.shuffle(values)
-        # 竞猜-谁在唱歌
-        # try:
-        #     export_who_is_singing_video(video_folder, values=values, title="Who is singing?")
-        # except Exception as e:
-        #     print("❌ 竞猜-谁在唱歌失败")
-        #     print(e)
-        #
-        # # 逐句唱歌-无声音的画面暂停# 一起唱（这个数据不好）
-        # try:
-        #     export_step_by_step_music_video(video_folder, title="Sing Along!")
-        # except:
-        #     print("❌ 逐句唱歌-无声音的画面暂停失败")
-        # 同句唱-擂台赛
-        # try:
-        #     export_who_sang_it_better(video_folder, title_1="WHO SANG IT BETTER??",)
-        # except Exception as e:
-        #     print("❌ 同句唱-擂台赛失败")
-        #     print(e)
-        # # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
-        try:
-            export_what_singing_order(video_folder, title="What’s the singing order?")
 
-        except Exception as e:
-            print("❌ 同句唱-擂台赛失败")
-            print(e)
+        # 竞猜-谁在唱歌
+        if video_len >= 4:
+
+            try:
+                export_who_is_singing_video(video_folder, values=values, title="Who is singing?")
+            except Exception as e:
+                print("❌ 竞猜-谁在唱歌失败")
+                print(e)
+
+            # 逐句唱歌-无声音的画面暂停# 一起唱（这个数据不好）
+            # try:
+            #     export_step_by_step_music_video(video_folder, title="Sing Along!")
+            # except:
+            #     print("❌ 逐句唱歌-无声音的画面暂停失败")
+            # 同句唱-擂台赛
+
+            # 竞猜-逐句唱歌的顺序-有声音的画面不暂停
+            try:
+                export_what_singing_order(video_folder, title="What’s the singing order?")
+
+            except Exception as e:
+                print("❌ 同句唱-擂台赛失败")
+                print(e)
+        elif video_len >= 2:
+            try:
+                export_who_sang_it_better(video_folder, title_1="WHO SANG IT BETTER??", )
+            except Exception as e:
+                print("❌ 同句唱-擂台赛失败")
+                print(e)
     # *****Q版AI动漫卡片*****
 
     # title_options = [
