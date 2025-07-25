@@ -6,7 +6,7 @@ from moviepy import VideoFileClip
 import warnings
 
 
-from preprocess.whisper_asr import WhisperModelSingleton
+from core.whisper_asr import WhisperModelSingleton
 
 # 定义模型存放位置
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -351,7 +351,7 @@ def whisper_main(video_dir):
     crop_videos_based_on_common_segments(common_segments, file_lyrics, video_dir, output_dir, similarity_threshold=0.3)
 
 def parakeet_main(video_dir):
-    from preprocess.parakeet_asr import transcribe_audio_with_nemo
+    from core.parakeet_asr import transcribe_audio_with_nemo
     audio_files = extract_audio_from_videos(video_dir, output_dir=AUDIO_DIR)
 
     if not audio_files:
@@ -390,7 +390,7 @@ def parakeet_main(video_dir):
 if __name__ == '__main__':
     # main(os.path.join(root_dir,  "pre","male"))
     # main(os.path.join(root_dir,  "pre/1"))
-    whisper_main(os.path.join(root_dir,  "pre/11"))
+    whisper_main(os.path.join(root_dir,  "pre/12"))
     # parakeet_main(os.path.join(root_dir,  "pre/8"))
     # main(os.path.join(root_dir,  "pre/4"))
     # main(os.path.join(root_dir,  "pre"))

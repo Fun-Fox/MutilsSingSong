@@ -71,6 +71,6 @@ def create_spectrum_data(audio_samples):
 
 # 示例调用
 if __name__ == "__main__":
-    input_video_path = r"D:\PycharmProjects\MutilsSingSong\assets\52\TikDownloader.io_7401013767196134661_hd_seg1_rgba_with_audio.mov"
+    input_video_path = r"/assets/done/52\TikDownloader.io_7401013767196134661_hd_seg1_rgba_with_audio.mov"
     output_video_path = "output_spectrum_video.mp4"
     generate_spectrum_video(input_video_path, output_video_path)
