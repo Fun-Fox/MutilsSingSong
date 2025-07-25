@@ -1,6 +1,7 @@
 import datetime
 import os
 import random
+import subprocess
 
 import cv2
 from moviepy import VideoFileClip, concatenate_audioclips, AudioFileClip
@@ -92,9 +93,16 @@ def export_what_singing_order(video_folder, title="What’s the singing order?")
         segment_duration = duration_ms // 4
 
         # 提取音频
-        audio_clip = clip.audio
+        # 提取音频 (使用ffmpeg命令行方式)
         full_audio_path = os.path.join(audio_dir, f"{os.path.splitext(video_file)[0]}_full.mp3")
-        audio_clip.write_audiofile(full_audio_path, bitrate="192k")
+        cmd_extract_audio = [
+            "ffmpeg",
+            "-i", video_path,
+            "-vn", "-acodec", "mp3",
+            "-ab", "192k",
+            "-y", full_audio_path
+        ]
+        subprocess.run(cmd_extract_audio, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # 分割音频
         full_audio = AudioSegment.from_mp3(full_audio_path)
