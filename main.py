@@ -72,23 +72,24 @@ def capture_last_frame(video_path: str, output_image_path: str = None) -> Option
 if __name__ == "__main__":
     root_dir = os.path.dirname(os.path.abspath(__file__))
     # *****翻唱歌曲玩法*****
-
+   # tou
     for i in range(53, 63):
         print(f"处理第{i}集")
         input_folder = os.path.join(root_dir, "assets", str(i))
         output_folder = os.path.join(root_dir, "assets", str(i), "matting")  # 输出文件夹
-        video_folder = os.path.join(output_folder)
+        video_folder = output_folder
 
-        trimmed_path = os.path.join(output_folder, 'trimmed')
-        if os.path.exists(trimmed_path):
+        if not os.path.exists(output_folder):
             matting_args = dict(
                 bg_color='black',  # 可选 black / white / transparent
                 batch_size=8,
                 fp16=True,  # 若 GPU 支持 FP16 推荐开启
                 transparent=True  # 是否输出透明背景图像（RGBA）
             )
+            process_videos_in_folder(input_folder, output_folder, **matting_args)
 
-            # process_videos_in_folder(input_folder, output_folder, **matting_args)
+        trimmed_path = os.path.join(output_folder, 'trimmed')
+        if not os.path.exists(trimmed_path):
 
             # video_folder = os.path.join(root_dir, "assets", str(i))
             cute_video(video_folder, os.path.join(video_folder, 'trimmed'), is_min=True)
