@@ -199,10 +199,26 @@ def synthesize_video_from_images(output_folder, video_info, video_path, transpar
         print(f"🎉 视频和音频已合成：{final_video_path}")
     else:
         print(f"🎉 视频已合成（无音频）：{output_video_path}")
-
+    # 删除无声音的临时文件
+    delete_video_file(output_video_path)
     # Step 4: 清理中间文件（可选）
     if os.path.exists(audio_path):
         os.remove(audio_path)
+
+
+def delete_video_file(file_path):
+    """
+    删除指定的视频文件
+    :param file_path: 要删除的文件路径
+    """
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"✅ 成功删除文件: {file_path}")
+        else:
+            print(f"⚠️ 文件不存在: {file_path}")
+    except Exception as e:
+        print(f"❌ 删除文件失败: {e}")
 
 
 def process_videos_in_folder(input_folder, output_folder, bg_color='white', batch_size=8, fp16=False,

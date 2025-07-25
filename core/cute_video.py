@@ -13,7 +13,7 @@ def cute_video(video_dir,output_dir,is_min=False):
     os.makedirs(output_dir, exist_ok=True)
 
     # 支持的视频格式
-    video_exts = ('.mp4', '.avi', '.mov')
+    video_exts = ('.mp4', '.avi','_hd_rgba_with_audio.mov')
 
     # 读取所有视频并获取它们的时长
     video_files = [f for f in os.listdir(video_dir) if f.lower().endswith(video_exts)]
