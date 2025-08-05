@@ -66,7 +66,7 @@ def matting_video_to_images(video_path, output_folder, bg_color='white', batch_s
                 fgrs, phas, *rec = model(video_frames, *rec, auto_downsample_ratio(height, width))
             except Exception as e:
                 print(f"处理帧时出错,后续帧处理跳过")
-                break
+                continue
             masks = phas.gt(0).float()  # 转为 float 避免 bool 减法错误
 
             if transparent:
@@ -221,7 +221,7 @@ def delete_video_file(file_path):
         print(f"❌ 删除文件失败: {e}")
 
 
-def process_videos_in_folder(input_folder, output_folder, bg_color='white', batch_size=8, fp16=False,
+def process_videos_in_folder(input_folder, output_folder, bg_color='white', batch_size=2, fp16=False,
                              transparent=False):
     """
     遍历文件夹中的视频并进行抠图处理（不保存 mask 图像）
@@ -240,12 +240,12 @@ def process_videos_in_folder(input_folder, output_folder, bg_color='white', batc
 
 
 if __name__ == '__main__':
-    input_folder = os.path.join(root_dir, "assets", "50")
-    output_folder = os.path.join(root_dir, "assets", "50", "matting")  # 输出文件夹
+    input_folder = os.path.join(root_dir, "assets", "56")
+    output_folder = os.path.join(root_dir, "assets", "56", "matting")  # 输出文件夹
 
     matting_args = dict(
         bg_color='black',  # 可选 black / white / transparent
-        batch_size=8,
+        batch_size=4,
         fp16=True,  # 若 GPU 支持 FP16 推荐开启
         transparent=True  # 是否输出透明背景图像（RGBA）
     )

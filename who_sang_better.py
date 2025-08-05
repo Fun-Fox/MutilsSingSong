@@ -1,5 +1,7 @@
 import datetime
 import random
+import subprocess
+
 from moviepy import VideoFileClip
 import os
 import cv2
@@ -11,23 +13,42 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def extract_video_frames(video_path):
-    """提取视频的第一帧和最后一帧作为图片"""
-    cap = cv2.VideoCapture(video_path)
-    success, frame = cap.read()
-    if not success:
-        raise ValueError(f"无法读取视频 {video_path}")
+    """使用FFmpeg提取视频的第一帧和最后一帧作为图片"""
+    # 获取视频总帧数
+    cmd = [
+        'ffprobe', '-v', 'error', '-select_streams', 'v:0',
+        '-count_frames', '-show_entries', 'stream=nb_read_frames',
+        '-of', 'default=nokey=1:noprint_wrappers=1', video_path
+    ]
 
-    first_frame_path = os.path.splitext(video_path)[0] + "_first.jpg"
-    cv2.imwrite(first_frame_path, frame)
+    try:
+        n_frames = int(subprocess.check_output(cmd, stderr=subprocess.STDOUT).decode().strip())
+        print(f"视频总帧数: {n_frames}")
+    except Exception as e:
+        print(f"无法获取视频帧数: {e}")
+        n_frames = 1000  # 默认值
 
-    last_frame = None
-    while success:
-        last_frame = frame
-        success, frame = cap.read()
-    cap.release()
+    base_name = os.path.splitext(video_path)[0]
+    first_frame_path = base_name + "_first.png"
+    last_frame_path = base_name + "_last.png"
 
-    last_frame_path = os.path.splitext(video_path)[0] + "_last.jpg"
-    cv2.imwrite(last_frame_path, last_frame)
+    # 提取第一帧
+    cmd_first = [
+        'ffmpeg', '-i', video_path, '-vf', 'select=eq(n\\,0)',
+        '-vframes', '1', '-update', '1', '-y', first_frame_path
+    ]
+
+    # 提取最后一帧
+    cmd_last = [
+        'ffmpeg', '-i', video_path, '-vf', f'select=eq(n\\,{n_frames - 1})',
+        '-vframes', '1', '-update', '1', '-y', last_frame_path
+    ]
+
+    try:
+        subprocess.run(cmd_first, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(cmd_last, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError as e:
+        raise ValueError(f"FFmpeg提取帧失败: {e}")
 
     return first_frame_path, last_frame_path
 
@@ -65,12 +86,13 @@ def add_video_material(script, track_name, relative_index, video_path, start_tim
     return start_time + video_material.duration
 
 
-def export_who_sang_it_better(video_folder, title_1="WHO SANG IT Better??",):
+def export_who_sang_it_better(video_folder, title_1="WHO SANG IT Better??", ):
     # 如果trimmed 目录存在则清除
     # 获取视频文件列表
     # video_folder = os.path.join(video_folder, "trimmed")
-    video_files = [f for f in os.listdir(video_folder) if f.endswith("_hd_rgba_with_audio.mov")]
-    video_files = random.sample(video_files, k=2)  # 随机选取2个
+    video_files = [f for f in os.listdir(video_folder) if f.endswith((".mov", ".mp4"))]
+    if len(video_files) > 2:
+        video_files = random.sample(video_files, k=2)  # 随机选取2个
     random.shuffle(video_files)
     base_folder = os.path.join(
         os.getenv("LOCALAPPDATA"),
@@ -274,7 +296,7 @@ Total vibes, nonstop fun!
     OUTPUT_PATH = os.path.join(root_dir, "output")
     os.makedirs(OUTPUT_PATH, exist_ok=True)
     now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mp4")
+    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mov")
 
     ctrl.export_draft(draft_folder_name, output_path,
                       resolution=Export_resolution.RES_1080P,
@@ -284,7 +306,7 @@ Total vibes, nonstop fun!
     # 裁剪视频
     output_video = VideoFileClip(output_path)
     clipped_video = output_video.subclipped(0, (total_duration / 1e6) + 4)
-    clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mp4")
+    clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mov")
     clipped_video.write_videofile(clipped_output_path, codec="libx264", audio_codec="aac")
     print(f"✅ 视频已裁剪并保存至: {clipped_output_path}")
 

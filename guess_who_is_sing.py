@@ -33,7 +33,7 @@ def add_video_material(start_time, output_video_path, transform_x, transform_y, 
 def export_who_is_singing_video(video_folder, values=[0.0, 0.0, 0.0, 1.0], title="Who is singing?"):
     # 获取 video_folder 路径下的所有 .mp4 视频文件
 
-    video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith("_hd_rgba_with_audio.mov")]
+    video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith((".mov",".mp4"))]
     random.shuffle(video_files)
     # 创建剪映草稿
     base_folder = os.path.join(
@@ -54,7 +54,7 @@ def export_who_is_singing_video(video_folder, values=[0.0, 0.0, 0.0, 1.0], title
         first_video_path = os.path.join(video_folder, 'trimmed', video_files[0])
         print(f"✅ 第一个视频路径为: {first_video_path}")
     else:
-        raise FileNotFoundError("未找到任何 .mp4 视频文件")
+        raise FileNotFoundError("未找到任何 mov 视频文件")
 
         # 加载第一个视频
     print("📘 正在加载第一个视频...")
@@ -235,7 +235,7 @@ Total vibes, nonstop fun!
     OUTPUT_PATH = os.path.join(root_dir, "output")
     os.makedirs(OUTPUT_PATH, exist_ok=True)
     now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mp4")
+    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mov")
     ctrl.export_draft(draft_folder_name, output_path,
                       resolution=Export_resolution.RES_1080P,
                       framerate=Export_framerate.FR_24,

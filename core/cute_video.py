@@ -31,7 +31,7 @@ def cute_video(video_dir,output_dir,is_min=False):
         except Exception as e:
             print(f"⚠️ 跳过无效视频 {path}: {e}")
 
-    final_duration = sum(durations) / len(durations)
+    final_duration = sum(durations) / len(video_files)
 
     if is_min:
         final_duration = min(durations)

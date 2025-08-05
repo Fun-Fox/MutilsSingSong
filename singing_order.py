@@ -55,7 +55,8 @@ def extract_video_frames(video_path):
     if not success:
         raise ValueError(f"无法读取视频 {video_path}")
 
-    first_frame_path = os.path.splitext(video_path)[0] + "_first.jpg"
+    # 使用PNG格式以保留透明通道
+    first_frame_path = os.path.splitext(video_path)[0] + "_first.png"
     cv2.imwrite(first_frame_path, frame)
 
     last_frame = None
@@ -64,7 +65,8 @@ def extract_video_frames(video_path):
         success, frame = cap.read()
     cap.release()
 
-    last_frame_path = os.path.splitext(video_path)[0] + "_last.jpg"
+    # 使用PNG格式以保留透明通道
+    last_frame_path = os.path.splitext(video_path)[0] + "_last.png"
     cv2.imwrite(last_frame_path, last_frame)
 
     return first_frame_path, last_frame_path
@@ -74,7 +76,7 @@ def export_what_singing_order(video_folder, title="What’s the singing order?")
     # Step 1: 预处理视频（裁剪）
 
     # Step 2: 获取视频文件列表
-    video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith("_hd_rgba_with_audio.mov")][:4]
+    video_files = [f for f in os.listdir(os.path.join(video_folder, 'trimmed')) if f.endswith((".mov",".mp4"))][:4]
     random.shuffle(video_files)
     num_videos = len(video_files)
 
@@ -156,7 +158,7 @@ def export_what_singing_order(video_folder, title="What’s the singing order?")
         first_video_path = os.path.join(video_folder, 'trimmed', video_files[0])
         print(f"✅ 第一个视频路径为: {first_video_path}")
     else:
-        raise FileNotFoundError("未找到任何 .mp4 视频文件")
+        raise FileNotFoundError("未找到任何 .mov 视频文件")
 
     # 加载第一个视频
     print("📘 正在加载第一个视频...")
@@ -350,7 +352,7 @@ Total vibes, nonstop fun!
     OUTPUT_PATH = os.path.join(root_dir, "output")
     os.makedirs(OUTPUT_PATH, exist_ok=True)
     now_date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mp4")
+    output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}.mov")
 
     ctrl.export_draft(
         draft_folder_name,
@@ -363,7 +365,7 @@ Total vibes, nonstop fun!
     # 裁剪视频为第一个视频的长度
     output_video = VideoFileClip(output_path)
     clipped_video = output_video.subclipped(0, first_video_duration + 4)  # 使用第一个视频的时长裁剪
-    clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mp4")
+    clipped_output_path = os.path.join(OUTPUT_PATH, f"{draft_folder_name}_{now_date}_裁剪版.mov")
     clipped_video.write_videofile(clipped_output_path, codec="libx264", audio_codec="aac")
     print(f"✅ 视频已裁剪并保存至: {clipped_output_path}")
 

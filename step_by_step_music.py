@@ -18,7 +18,7 @@ def export_step_by_step_music_video(video_folder, title="Sing Along!"):
     # === 第一步：从第一个视频提取卡点时间点 ===
 
     # 获取 video_folder 路径下的所有 .mp4 视频文件
-    video_files = [f for f in os.listdir(video_folder) if f.endswith(".mp4")]
+    video_files = [f for f in os.listdir(video_folder) if f.endswith((".mov", ".mp4"))]
     random.shuffle(video_files)
     # 检查是否存在至少一个视频文件
     if video_files:
@@ -26,7 +26,7 @@ def export_step_by_step_music_video(video_folder, title="Sing Along!"):
         first_video_path = os.path.join(video_folder, video_files[0])
         print(f"✅ 第一个视频路径为: {first_video_path}")
     else:
-        raise FileNotFoundError("未找到任何 .mp4 视频文件")
+        raise FileNotFoundError("未找到任何.mov 视频文件")
 
     # 加载第一个视频
     print("📘 正在加载第一个视频...")
